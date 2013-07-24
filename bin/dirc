@@ -1,0 +1,42 @@
+#!/usr/bin/env node
+
+var fs = require('fs');
+var program = require('commander');
+var DIRC_VERSION = '0.0.1';
+
+program
+	.version(DIRC_VERSION)
+	.option('-c, --config', 'JSON configuration file')
+	.parse(process.argv);
+
+var cfg = undefined;
+var irc = undefined;
+var p2p = undefined;
+
+function read_config()
+{
+	var cfg_fn = program.config ? program.config : 'dirc.json';
+	try {
+		cfg = JSON.parse(fs.readFileSync(cfg_fn));
+	} catch(e) {
+		console.error("Missing or invalid JSON configuration", cfg_fn);
+		process.exit(1);
+	}
+}
+
+function start_irc()
+{
+	var IRCServer = require('../IRCServer').class();
+	irc = new IRCServer(cfg.irc);
+	irc.create();
+	irc.start();
+}
+
+function main()
+{
+	read_config();
+	start_irc();
+}
+
+main();
+
