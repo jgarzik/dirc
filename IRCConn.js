@@ -5,6 +5,7 @@ function ClassSpec(b) {
 		IRCConn.super(this, arguments);
 		this.partial = '';
 		this.sock = cfg.socket;
+		this.remoteAddress = this.sock.remoteAddress;
 	};
 	IRCConn.superclass = b.superclass || require('events').EventEmitter;
 
@@ -12,42 +13,48 @@ function ClassSpec(b) {
 		// append to existing buffer
 		this.partial += String(dataIn);
 
-		// if overlength, fail
-		if (this.partial.length > 512) {
-			this.sockEnd();
-			return;
+		while (1) {
+			var skip = 0;
+			var nl = this.partial.indexOf("\n");
+			if (nl < 0) {
+				if (this.partial.length > 512)
+					this.sockEnd();
+				return;
+			}
+			if ((nl > 0) && (this.partial[nl - 1] == "\r"))
+				skip = 1;
+
+			var line = this.partial.slice(0, nl - skip);
+			this.partial = this.partial.slice(nl + 1);
+
+			// if overlength, fail
+			if (line.length > 511) {
+				this.sockEnd();
+				return;
+			}
+
+			// parse IRC protocol message
+			var reIRC = /^(:(\S+) )?(\S+)( (?!:)(.+?))?( :(.+))?$/;
+			res = reIRC.exec(line);
+			if (!res) {
+				this.sockEnd();
+				return;
+			}
+
+			var msg = {
+				prefix: res[2],
+				command: res[3],
+				params: res[5],
+				trailer: res[7],
+			};
+
+			// emit message
+			this.emit('message', {
+				conn: this,
+				socket: this.sock,
+				message: msg,
+			});
 		}
-
-		// match one line
-		var re = /^([^\r\n]+)\r\n(.*)$/;
-		var res = re.exec(this.partial);
-		if (!res)
-			return;
-
-		var line = res[1];
-		this.partial = res[2];
-
-		// parse IRC protocol message
-		var reIRC = /^(:(\S+) )?(\S+)( (?!:)(.+?))?( :(.+))?$/;
-		res = reIRC.exec(line);
-		if (!res) {
-			this.sockEnd();
-			return;
-		}
-
-		var msg = {
-			prefix: res[2],
-			command: res[3],
-			params: res[5],
-			trailer: res[7],
-		};
-
-		// emit message
-		this.emit('message', {
-			conn: this,
-			socket: this.sock,
-			message: msg,
-		});
 	};
 
 	IRCConn.prototype.sockEnd = function() {
