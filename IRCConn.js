@@ -9,6 +9,29 @@ function ClassSpec(b) {
 	};
 	IRCConn.superclass = b.superclass || require('events').EventEmitter;
 
+	function me_user(msg) {
+		msg.user = msg.irc_params.split(' ');
+	}
+
+	function me_pass(msg) {
+		msg.pass = msg.irc_params;
+	}
+
+	function me_nick(msg) {
+		msg.nick = msg.irc_params;
+	}
+
+	function msgExpand(msg) {
+		switch (msg.irc_command) {
+		case 'USER': me_user(msg); break;
+		case 'PASS': me_pass(msg); break;
+		case 'NICK': me_nick(msg); break;
+		default:
+			// do nothing
+			break;
+		}
+	}
+
 	IRCConn.prototype.sockData = function(dataIn) {
 		// append to existing buffer
 		this.partial += String(dataIn);
@@ -41,19 +64,28 @@ function ClassSpec(b) {
 				return;
 			}
 
+			var command = res[3];
 			var msg = {
-				prefix: res[2],
-				command: res[3],
-				params: res[5],
-				trailer: res[7],
+				irc_prefix: res[2],
+				irc_command: command,
+				irc_params: res[5],
+				irc_trailer: res[7],
 			};
 
-			// emit message
-			this.emit('message', {
+			// additional message-specific parsing
+			msgExpand(msg);
+
+			var emitArgs = {
 				conn: this,
 				socket: this.sock,
 				message: msg,
-			});
+			};
+
+			// emit message based on IRC command
+			this.emit(command, emitArgs);
+
+			// general message tap
+			this.emit('message', emitArgs);
 		}
 	};
 
