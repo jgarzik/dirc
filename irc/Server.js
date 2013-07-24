@@ -2,9 +2,9 @@ require('classtool');
 
 function ClassSpec(b) {
 	var net = require('net');
-	var IRCConn = require('./IRCConn').class();
+	var Conn = require('./Conn').class();
 
-	function IRCServer(cfg) {
+	function Server(cfg) {
 		if (typeof cfg !== 'object')
 			cfg = {};
 		this.port = cfg.port || 12667;
@@ -12,7 +12,7 @@ function ClassSpec(b) {
 		this.clients = [];
 	};
 
-	IRCServer.prototype.connEnd = function(info) {
+	Server.prototype.connEnd = function(info) {
 		var addr = info.conn.remoteAddress;
 		var conn = info.conn;
 		for (var i = 0; i < this.clients.length; i++) {
@@ -25,13 +25,13 @@ function ClassSpec(b) {
 		console.log('Disconnected', addr);
 	};
 
-	IRCServer.prototype.connMessage = function(info) {
+	Server.prototype.connMessage = function(info) {
 		console.log(info.socket.remoteAddress, ":", info.message);
 	};
 
-	IRCServer.prototype.connNew = function(connSocket) {
+	Server.prototype.connNew = function(connSocket) {
 		console.log("Connected", connSocket.remoteAddress);
-		var conn = new IRCConn({
+		var conn = new Conn({
 			srv: this,
 			socket: connSocket,
 		});
@@ -48,26 +48,26 @@ function ClassSpec(b) {
 		conn.start();
 	};
 
-	IRCServer.prototype.srvBound = function() {
+	Server.prototype.srvBound = function() {
 		// server is now up (bound and listening)
 		console.log("IRC server listening");
 	};
 
-	IRCServer.prototype.create = function() {
+	Server.prototype.create = function() {
 		var us = this;
 		this.srv = net.createServer(function(conn) {
 			us.connNew(conn);
 		});
 	};
 
-	IRCServer.prototype.start = function() {
+	Server.prototype.start = function() {
 		var us = this;
 		this.srv.listen(this.port, function() {
 			us.srvBound();
 		});
 	};
 
-	return IRCServer;
+	return Server;
 };
 module.defineClass(ClassSpec);
 

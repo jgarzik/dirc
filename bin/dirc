@@ -26,8 +26,8 @@ function read_config()
 
 function start_irc()
 {
-	var IRCServer = require('../IRCServer').class();
-	irc = new IRCServer(cfg.irc);
+	var Server = require('../irc/Server').class();
+	irc = new Server(cfg.irc);
 	irc.create();
 	irc.start();
 }

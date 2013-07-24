@@ -1,13 +1,13 @@
 require('classtool');
 
 function ClassSpec(b) {
-	function IRCConn(cfg) {
-		IRCConn.super(this, arguments);
+	function Conn(cfg) {
+		Conn.super(this, arguments);
 		this.partial = '';
 		this.sock = cfg.socket;
 		this.remoteAddress = this.sock.remoteAddress;
 	};
-	IRCConn.superclass = b.superclass || require('events').EventEmitter;
+	Conn.superclass = b.superclass || require('events').EventEmitter;
 
 	function me_user(msg) {
 		msg.user = msg.irc_params.split(' ');
@@ -32,7 +32,7 @@ function ClassSpec(b) {
 		}
 	}
 
-	IRCConn.prototype.sockData = function(dataIn) {
+	Conn.prototype.sockData = function(dataIn) {
 		// append to existing buffer
 		this.partial += String(dataIn);
 
@@ -89,7 +89,7 @@ function ClassSpec(b) {
 		}
 	};
 
-	IRCConn.prototype.sockEnd = function() {
+	Conn.prototype.sockEnd = function() {
 		this.emit('end', {
 			conn: this,
 			socket: this.sock,
@@ -98,7 +98,7 @@ function ClassSpec(b) {
 		this.sock = undefined;
 	};
 
-	IRCConn.prototype.start = function() {
+	Conn.prototype.start = function() {
 		var us = this;
 		this.sock.on('data', function(dataIn) {
 			us.sockData(dataIn);
@@ -108,7 +108,7 @@ function ClassSpec(b) {
 		});
 	};
 
-	IRCConn.prototype.send = function(msg) {
+	Conn.prototype.send = function(msg) {
 		line = '';
 		if (msg.prefix)
 			line += ':' + prefix + ' ';
@@ -122,7 +122,7 @@ function ClassSpec(b) {
 		this.sock.write(line, 'binary');
 	};
 
-	return IRCConn;
+	return Conn;
 };
 module.defineClass(ClassSpec);
 
