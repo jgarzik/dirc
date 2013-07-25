@@ -22,6 +22,11 @@ function read_config()
 		console.error("Missing or invalid JSON configuration", cfg_fn);
 		process.exit(1);
 	}
+
+	// some hardcoded additions
+	if (typeof cfg.irc !== 'object')
+		cfg.irc = {};
+	cfg.irc.server_version = DIRC_VERSION;
 }
 
 function start_irc()

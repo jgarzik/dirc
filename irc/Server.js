@@ -8,8 +8,11 @@ function ClassSpec(b) {
 		if (typeof cfg !== 'object')
 			cfg = {};
 		this.port = cfg.port || 12667;
+		this.hostname = cfg.hostname || 'localhost';
+		this.version = cfg.server_version;
 		this.srv = undefined;
 		this.clients = [];
+		this.ctime = undefined;
 	};
 
 	Server.prototype.connEnd = function(info) {
@@ -29,6 +32,12 @@ function ClassSpec(b) {
 		console.log(info.socket.remoteAddress, ":", info.message);
 	};
 
+	Server.prototype.connNick = function(info) {
+	};
+
+	Server.prototype.connUser = function(info) {
+	};
+
 	Server.prototype.connNew = function(connSocket) {
 		console.log("Connected", connSocket.remoteAddress);
 		var conn = new Conn({
@@ -38,12 +47,10 @@ function ClassSpec(b) {
 		this.clients.push(conn);
 
 		var us = this;
-		conn.on('message', function(info) {
-			us.connMessage(info);
-		});
-		conn.on('end', function(info) {
-			us.connEnd(info);
-		});
+		conn.on('message', function(info) { us.connMessage(info); });
+		conn.on('end', function(info) { us.connEnd(info); });
+		conn.on('NICK', function(info) { us.connNick(info); });
+		conn.on('USER', function(info) { us.connUser(info); });
 
 		conn.start();
 	};
@@ -58,6 +65,8 @@ function ClassSpec(b) {
 		this.srv = net.createServer(function(conn) {
 			us.connNew(conn);
 		});
+
+		this.ctime = new Date();
 	};
 
 	Server.prototype.start = function() {
