@@ -18,8 +18,8 @@ function ClassSpec(b) {
 		this.cli_by_user = {};
 		this.ctime = undefined;
 
-		this.user_modes = 'aioOr';
-		this.chan_modes = 'aehiImoOpqrv';
+		this.user_modes = 'aiwroOs';
+		this.chan_modes = 'oOvaimnqpsrtklbeI';
 	};
 
 	Server.prototype.reply = function(conn, msg) {
