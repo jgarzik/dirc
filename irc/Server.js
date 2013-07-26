@@ -77,13 +77,29 @@ function ClassSpec(b) {
 	};
 
 	Server.prototype.connPing = function(info) {
+		var conn = info.conn;
+
+		if (!info.message.irc_trailer) {
+			info.message.irc_trailer = info.message.irc_params;
+			info.message.irc_params = undefined;
+		}
+		if (!info.message.irc_params)
+			info.message.irc_params = this.hostname;
+
+		if (info.message.irc_params &&
+		    (info.message.irc_params != this.hostname)) {
+			var msg = IrcReplies.ERR_NOSUCHSERVER(info.message.irc_params);
+			this.reply(conn, msg);
+			return;
+		}
+
 		var msg = {
 			prefix: undefined,
 			command: 'PONG',
-			params: this.hostname,
-			trailer: undefined,
+			params: info.message.irc_params,
+			trailer: info.message.irc_trailer,
 		};
-		this.reply(info.conn, msg);
+		this.reply(conn, msg);
 	};
 
 	Server.prototype.connUser = function(info) {
@@ -114,7 +130,7 @@ function ClassSpec(b) {
 		this.reply(conn, msg);
 
 		var msg = IrcReplies.RPL_YOURHOST(conn.nick, this.hostname,
-						  this.version);
+						  'dirc-' +this.version);
 		this.reply(conn, msg);
 
 		var msg = IrcReplies.RPL_CREATED(conn.nick,
@@ -122,7 +138,8 @@ function ClassSpec(b) {
 		this.reply(conn, msg);
 
 		var msg = IrcReplies.RPL_MYINFO(conn.nick, this.hostname,
-						this.version, this.user_modes,
+						'dirc-' +this.version,
+						this.user_modes,
 						this.chan_modes);
 		this.reply(conn, msg);
 	};
