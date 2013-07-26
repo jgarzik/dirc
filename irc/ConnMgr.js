@@ -10,6 +10,8 @@ function ClassSpec(b) {
 	ConnMgr.superclass = b.superclass || require('events').EventEmitter;
 
 	ConnMgr.prototype.delete = function(conn) {
+		conn.stop();
+
 		for (var i = 0; i < this.cli.length; i++) {
 			if (this.cli[i] == conn) {
 				this.cli.splice(i, 1);

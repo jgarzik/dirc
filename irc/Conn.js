@@ -172,6 +172,14 @@ function ClassSpec(b) {
 		this.sock.write(line, 'binary');
 	};
 
+	Conn.prototype.stop = function() {
+		if (!this.sock)
+			return;
+
+		this.sock.destroy();
+		this.sock = undefined;
+	};
+
 	return Conn;
 };
 module.defineClass(ClassSpec);

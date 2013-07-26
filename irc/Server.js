@@ -22,6 +22,15 @@ function ClassSpec(b) {
 		this.chan_modes = 'oOvaimnqpsrtklbeI';
 	};
 
+	function composeUserStr(conn) {
+		return conn.nick + "!~" + conn.user + "@" + conn.remoteAddress;
+	};
+
+	function replyUser(conn, msg) {
+		msg.prefix = composeUserStr(conn);
+		conn.send(msg);
+	};
+
 	Server.prototype.reply = function(conn, msg) {
 		msg.prefix = this.hostname;
 		conn.send(msg);
@@ -86,6 +95,19 @@ function ClassSpec(b) {
 			trailer: info.message.irc_trailer,
 		};
 		this.reply(conn, msg);
+	};
+
+	Server.prototype.connQuit = function(info) {
+		var trailer = info.message.irc_trailer || 'Client Quit';
+		var msg = {
+			prefix: undefined,
+			command: 'QUIT',
+			params: undefined,
+			trailer: trailer,
+		};
+		replyUser(info.conn, msg);
+
+		this.connEnd(info);
 	};
 
 	Server.prototype.connUser = function(info) {
@@ -184,6 +206,7 @@ function ClassSpec(b) {
 		conn.on('NICK', function(info) { us.connNick(info); });
 		conn.on('USER', function(info) { us.connUser(info); });
 		conn.on('PING', function(info) { us.connPing(info); });
+		conn.on('QUIT', function(info) { us.connQuit(info); });
 		conn.on('WHOIS', function(info) { us.connWhois(info); });
 
 		conn.start();
