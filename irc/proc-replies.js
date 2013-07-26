@@ -5,7 +5,7 @@ var data = String(fs.readFileSync('replies.dat'));
 var lines = data.split("\n");
 var n_line = 0;
 
-function scanArgStr(argarr, s, wantSym)
+function scanArgStr(argarr, argDict, s, wantSym)
 {
 	while (1) {
 		var bg = s.indexOf('<');
@@ -18,6 +18,10 @@ function scanArgStr(argarr, s, wantSym)
 
 		var tag = s.slice(0, end);
 		s = s.slice(end + 1);
+
+		if (tag in argDict)
+			continue;
+		argDict[tag] = true;
 
 		if (wantSym) {
 			var reTag = /[\s'&\/]+/g;
@@ -35,6 +39,8 @@ function scanArgStr(argarr, s, wantSym)
 
 function pr_hdr(line, command, args, argSym, params, trailer)
 {
+	params = params.replace(/\s\s*$/, '');
+
 	console.log("\n// " + line);
 	var argstr = argSym.join(', ');
 	console.log("exports." + command + " = function(" + argstr + ") {");
@@ -114,12 +120,15 @@ function parseLine(line)
 		trailer = res[3];
 	}
 
+	var argDict = {};
 	var args = [];
-	scanArgStr(args, params, false);
-	scanArgStr(args, trailer, false);
+	scanArgStr(args, argDict, params, false);
+	scanArgStr(args, argDict, trailer, false);
+
+	argDict = {};
 	var argSym = [];
-	scanArgStr(argSym, params, true);
-	scanArgStr(argSym, trailer, true);
+	scanArgStr(argSym, argDict, params, true);
+	scanArgStr(argSym, argDict, trailer, true);
 
 	pr_hdr(line, command, args, argSym, params, trailer);
 	pr_ftr();

@@ -5,10 +5,14 @@ var RPL = require('./RPL');
 
 
 
-// RPL_WELCOME "Welcome to the Internet Relay Network <nick>"
+// RPL_WELCOME "<nick> :Welcome to the Internet Relay Network <nick>"
 exports.RPL_WELCOME = function(r_nick) {
 
 	var re = undefined;
+
+	var f_param = "<nick>";
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
 
 	var f_trailer = "Welcome to the Internet Relay Network <nick>";
 	re = new RegExp("<nick>", "g");
@@ -17,17 +21,27 @@ exports.RPL_WELCOME = function(r_nick) {
 	return {
 		prefix: undefined,
 		command: RPL.WELCOME,
-		params: undefined,
+		params: f_param,
 		trailer: f_trailer,
 	};
 };
 
-// RPL_YOURHOST "Your host is <servername>, running version <ver>"
-exports.RPL_YOURHOST = function(r_servername, r_ver) {
+// RPL_YOURHOST "<nick> :Your host is <servername>, running version <ver>"
+exports.RPL_YOURHOST = function(r_nick, r_servername, r_ver) {
 
 	var re = undefined;
 
+	var f_param = "<nick>";
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
+	re = new RegExp("<servername>", "g");
+	f_param = f_param.replace(re, r_servername);
+	re = new RegExp("<ver>", "g");
+	f_param = f_param.replace(re, r_ver);
+
 	var f_trailer = "Your host is <servername>, running version <ver>";
+	re = new RegExp("<nick>", "g");
+	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<servername>", "g");
 	f_trailer = f_trailer.replace(re, r_servername);
 	re = new RegExp("<ver>", "g");
@@ -36,48 +50,58 @@ exports.RPL_YOURHOST = function(r_servername, r_ver) {
 	return {
 		prefix: undefined,
 		command: RPL.YOURHOST,
-		params: undefined,
+		params: f_param,
 		trailer: f_trailer,
 	};
 };
 
-// RPL_CREATED "This server was created <date>"
-exports.RPL_CREATED = function(r_date) {
+// RPL_CREATED "<nick> :This server was created <date>"
+exports.RPL_CREATED = function(r_nick, r_date) {
 
 	var re = undefined;
 
+	var f_param = "<nick>";
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
+	re = new RegExp("<date>", "g");
+	f_param = f_param.replace(re, r_date);
+
 	var f_trailer = "This server was created <date>";
+	re = new RegExp("<nick>", "g");
+	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<date>", "g");
 	f_trailer = f_trailer.replace(re, r_date);
 
 	return {
 		prefix: undefined,
 		command: RPL.CREATED,
-		params: undefined,
+		params: f_param,
 		trailer: f_trailer,
 	};
 };
 
-// RPL_MYINFO "<servername> <version> <available user modes> <available channel modes>" 
-exports.RPL_MYINFO = function(r_servername, r_version, r_available_user_modes, r_available_channel_modes) {
+// RPL_MYINFO "<nick> <servername> <version> <available user modes> <available channel modes> :" 
+exports.RPL_MYINFO = function(r_nick, r_servername, r_version, r_available_user_modes, r_available_channel_modes) {
 
 	var re = undefined;
 
-	var f_trailer = "<servername> <version> <available user modes> <available channel modes>";
+	var f_param = "<nick> <servername> <version> <available user modes> <available channel modes>";
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
 	re = new RegExp("<servername>", "g");
-	f_trailer = f_trailer.replace(re, r_servername);
+	f_param = f_param.replace(re, r_servername);
 	re = new RegExp("<version>", "g");
-	f_trailer = f_trailer.replace(re, r_version);
+	f_param = f_param.replace(re, r_version);
 	re = new RegExp("<available user modes>", "g");
-	f_trailer = f_trailer.replace(re, r_available_user_modes);
+	f_param = f_param.replace(re, r_available_user_modes);
 	re = new RegExp("<available channel modes>", "g");
-	f_trailer = f_trailer.replace(re, r_available_channel_modes);
+	f_param = f_param.replace(re, r_available_channel_modes);
 
 	return {
 		prefix: undefined,
 		command: RPL.MYINFO,
-		params: undefined,
-		trailer: f_trailer,
+		params: f_param,
+		trailer: undefined,
 	};
 };
 
@@ -105,7 +129,7 @@ exports.RPL_AWAY = function(r_nick, r_away_message) {
 
 	var re = undefined;
 
-	var f_param = "<nick> ";
+	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
 	re = new RegExp("<away message>", "g");
@@ -160,7 +184,7 @@ exports.RPL_WHOISUSER = function(r_nick, r_user, r_host, r_real_name) {
 
 	var re = undefined;
 
-	var f_param = "<nick> <user> <host> * ";
+	var f_param = "<nick> <user> <host> *";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
 	re = new RegExp("<user>", "g");
@@ -193,7 +217,7 @@ exports.RPL_WHOISSERVER = function(r_nick, r_server, r_server_info) {
 
 	var re = undefined;
 
-	var f_param = "<nick> <server> ";
+	var f_param = "<nick> <server>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
 	re = new RegExp("<server>", "g");
@@ -222,7 +246,7 @@ exports.RPL_WHOISOPERATOR = function(r_nick) {
 
 	var re = undefined;
 
-	var f_param = "<nick> ";
+	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
 
@@ -243,7 +267,7 @@ exports.RPL_WHOISIDLE = function(r_nick, r_integer) {
 
 	var re = undefined;
 
-	var f_param = "<nick> <integer> ";
+	var f_param = "<nick> <integer>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
 	re = new RegExp("<integer>", "g");
@@ -268,7 +292,7 @@ exports.RPL_ENDOFWHOIS = function(r_nick) {
 
 	var re = undefined;
 
-	var f_param = "<nick> ";
+	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
 
@@ -289,7 +313,7 @@ exports.RPL_WHOWASUSER = function(r_nick, r_user, r_host, r_real_name) {
 
 	var re = undefined;
 
-	var f_param = "<nick> <user> <host> * ";
+	var f_param = "<nick> <user> <host> *";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
 	re = new RegExp("<user>", "g");
@@ -322,7 +346,7 @@ exports.RPL_ENDOFWHOWAS = function(r_nick) {
 
 	var re = undefined;
 
-	var f_param = "<nick> ";
+	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
 
@@ -343,7 +367,7 @@ exports.RPL_LIST = function(r_channel, r_n_visible, r_topic) {
 
 	var re = undefined;
 
-	var f_param = "<channel> <# visible> ";
+	var f_param = "<channel> <# visible>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 	re = new RegExp("<# visible>", "g");
@@ -427,7 +451,7 @@ exports.RPL_NOTOPIC = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
@@ -448,7 +472,7 @@ exports.RPL_TOPIC = function(r_channel, r_topic) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 	re = new RegExp("<topic>", "g");
@@ -492,7 +516,7 @@ exports.RPL_SUMMONING = function(r_user) {
 
 	var re = undefined;
 
-	var f_param = "<user> ";
+	var f_param = "<user>";
 	re = new RegExp("<user>", "g");
 	f_param = f_param.replace(re, r_user);
 
@@ -532,7 +556,7 @@ exports.RPL_ENDOFINVITELIST = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
@@ -572,7 +596,7 @@ exports.RPL_ENDOFEXCEPTLIST = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
@@ -593,7 +617,7 @@ exports.RPL_VERSION = function(r_version, r_debuglevel, r_server, r_comments) {
 
 	var re = undefined;
 
-	var f_param = "<version>.<debuglevel> <server> ";
+	var f_param = "<version>.<debuglevel> <server>";
 	re = new RegExp("<version>", "g");
 	f_param = f_param.replace(re, r_version);
 	re = new RegExp("<debuglevel>", "g");
@@ -626,7 +650,7 @@ exports.RPL_ENDOFWHO = function(r_name) {
 
 	var re = undefined;
 
-	var f_param = "<name> ";
+	var f_param = "<name>";
 	re = new RegExp("<name>", "g");
 	f_param = f_param.replace(re, r_name);
 
@@ -647,7 +671,7 @@ exports.RPL_ENDOFNAMES = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
@@ -668,7 +692,7 @@ exports.RPL_LINKS = function(r_mask, r_server, r_hopcount, r_server_info) {
 
 	var re = undefined;
 
-	var f_param = "<mask> <server> ";
+	var f_param = "<mask> <server>";
 	re = new RegExp("<mask>", "g");
 	f_param = f_param.replace(re, r_mask);
 	re = new RegExp("<server>", "g");
@@ -701,7 +725,7 @@ exports.RPL_ENDOFLINKS = function(r_mask) {
 
 	var re = undefined;
 
-	var f_param = "<mask> ";
+	var f_param = "<mask>";
 	re = new RegExp("<mask>", "g");
 	f_param = f_param.replace(re, r_mask);
 
@@ -741,7 +765,7 @@ exports.RPL_ENDOFBANLIST = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
@@ -858,7 +882,7 @@ exports.RPL_REHASHING = function(r_config_file) {
 
 	var re = undefined;
 
-	var f_param = "<config file> ";
+	var f_param = "<config file>";
 	re = new RegExp("<config file>", "g");
 	f_param = f_param.replace(re, r_config_file);
 
@@ -896,7 +920,7 @@ exports.RPL_TIME = function(r_server, r_string_showing_server_s_local_time) {
 
 	var re = undefined;
 
-	var f_param = "<server> ";
+	var f_param = "<server>";
 	re = new RegExp("<server>", "g");
 	f_param = f_param.replace(re, r_server);
 	re = new RegExp("<string showing server's local time>", "g");
@@ -1107,15 +1131,13 @@ exports.RPL_TRACEUSER = function(r_class, r_nick) {
 };
 
 // RPL_TRACESERVER "Serv <class> <int>S <int>C <server> <thing>@<location> V<protocol version>"
-exports.RPL_TRACESERVER = function(r_class, r_int, r_int, r_server, r_thing, r_location, r_protocol_version) {
+exports.RPL_TRACESERVER = function(r_class, r_int, r_server, r_thing, r_location, r_protocol_version) {
 
 	var re = undefined;
 
 	var f_trailer = "Serv <class> <int>S <int>C <server> <thing>@<location> V<protocol version>";
 	re = new RegExp("<class>", "g");
 	f_trailer = f_trailer.replace(re, r_class);
-	re = new RegExp("<int>", "g");
-	f_trailer = f_trailer.replace(re, r_int);
 	re = new RegExp("<int>", "g");
 	f_trailer = f_trailer.replace(re, r_int);
 	re = new RegExp("<server>", "g");
@@ -1220,7 +1242,7 @@ exports.RPL_TRACEEND = function(r_server_name, r_version_debug_level) {
 
 	var re = undefined;
 
-	var f_param = "<server name> <version & debug level> ";
+	var f_param = "<server name> <version & debug level>";
 	re = new RegExp("<server name>", "g");
 	f_param = f_param.replace(re, r_server_name);
 	re = new RegExp("<version & debug level>", "g");
@@ -1297,7 +1319,7 @@ exports.RPL_ENDOFSTATS = function(r_stats_letter) {
 
 	var re = undefined;
 
-	var f_param = "<stats letter> ";
+	var f_param = "<stats letter>";
 	re = new RegExp("<stats letter>", "g");
 	f_param = f_param.replace(re, r_stats_letter);
 
@@ -1396,7 +1418,7 @@ exports.RPL_SERVLISTEND = function(r_mask, r_type) {
 
 	var re = undefined;
 
-	var f_param = "<mask> <type> ";
+	var f_param = "<mask> <type>";
 	re = new RegExp("<mask>", "g");
 	f_param = f_param.replace(re, r_mask);
 	re = new RegExp("<type>", "g");
@@ -1417,15 +1439,11 @@ exports.RPL_SERVLISTEND = function(r_mask, r_type) {
 };
 
 // RPL_LUSERCLIENT ":There are <integer> users and <integer> services on <integer> servers"
-exports.RPL_LUSERCLIENT = function(r_integer, r_integer, r_integer) {
+exports.RPL_LUSERCLIENT = function(r_integer) {
 
 	var re = undefined;
 
 	var f_trailer = "There are <integer> users and <integer> services on <integer> servers";
-	re = new RegExp("<integer>", "g");
-	f_trailer = f_trailer.replace(re, r_integer);
-	re = new RegExp("<integer>", "g");
-	f_trailer = f_trailer.replace(re, r_integer);
 	re = new RegExp("<integer>", "g");
 	f_trailer = f_trailer.replace(re, r_integer);
 
@@ -1442,7 +1460,7 @@ exports.RPL_LUSEROP = function(r_integer) {
 
 	var re = undefined;
 
-	var f_param = "<integer> ";
+	var f_param = "<integer>";
 	re = new RegExp("<integer>", "g");
 	f_param = f_param.replace(re, r_integer);
 
@@ -1463,7 +1481,7 @@ exports.RPL_LUSERUNKNOWN = function(r_integer) {
 
 	var re = undefined;
 
-	var f_param = "<integer> ";
+	var f_param = "<integer>";
 	re = new RegExp("<integer>", "g");
 	f_param = f_param.replace(re, r_integer);
 
@@ -1484,7 +1502,7 @@ exports.RPL_LUSERCHANNELS = function(r_integer) {
 
 	var re = undefined;
 
-	var f_param = "<integer> ";
+	var f_param = "<integer>";
 	re = new RegExp("<integer>", "g");
 	f_param = f_param.replace(re, r_integer);
 
@@ -1501,13 +1519,11 @@ exports.RPL_LUSERCHANNELS = function(r_integer) {
 };
 
 // RPL_LUSERME ":I have <integer> clients and <integer> servers"
-exports.RPL_LUSERME = function(r_integer, r_integer) {
+exports.RPL_LUSERME = function(r_integer) {
 
 	var re = undefined;
 
 	var f_trailer = "I have <integer> clients and <integer> servers";
-	re = new RegExp("<integer>", "g");
-	f_trailer = f_trailer.replace(re, r_integer);
 	re = new RegExp("<integer>", "g");
 	f_trailer = f_trailer.replace(re, r_integer);
 
@@ -1524,7 +1540,7 @@ exports.RPL_ADMINME = function(r_server) {
 
 	var re = undefined;
 
-	var f_param = "<server> ";
+	var f_param = "<server>";
 	re = new RegExp("<server>", "g");
 	f_param = f_param.replace(re, r_server);
 
@@ -1596,7 +1612,7 @@ exports.RPL_TRYAGAIN = function(r_command) {
 
 	var re = undefined;
 
-	var f_param = "<command> ";
+	var f_param = "<command>";
 	re = new RegExp("<command>", "g");
 	f_param = f_param.replace(re, r_command);
 
@@ -1617,7 +1633,7 @@ exports.ERR_NOSUCHNICK = function(r_nickname) {
 
 	var re = undefined;
 
-	var f_param = "<nickname> ";
+	var f_param = "<nickname>";
 	re = new RegExp("<nickname>", "g");
 	f_param = f_param.replace(re, r_nickname);
 
@@ -1638,7 +1654,7 @@ exports.ERR_NOSUCHSERVER = function(r_server_name) {
 
 	var re = undefined;
 
-	var f_param = "<server name> ";
+	var f_param = "<server name>";
 	re = new RegExp("<server name>", "g");
 	f_param = f_param.replace(re, r_server_name);
 
@@ -1659,7 +1675,7 @@ exports.ERR_NOSUCHCHANNEL = function(r_channel_name) {
 
 	var re = undefined;
 
-	var f_param = "<channel name> ";
+	var f_param = "<channel name>";
 	re = new RegExp("<channel name>", "g");
 	f_param = f_param.replace(re, r_channel_name);
 
@@ -1680,7 +1696,7 @@ exports.ERR_CANNOTSENDTOCHAN = function(r_channel_name) {
 
 	var re = undefined;
 
-	var f_param = "<channel name> ";
+	var f_param = "<channel name>";
 	re = new RegExp("<channel name>", "g");
 	f_param = f_param.replace(re, r_channel_name);
 
@@ -1701,7 +1717,7 @@ exports.ERR_TOOMANYCHANNELS = function(r_channel_name) {
 
 	var re = undefined;
 
-	var f_param = "<channel name> ";
+	var f_param = "<channel name>";
 	re = new RegExp("<channel name>", "g");
 	f_param = f_param.replace(re, r_channel_name);
 
@@ -1722,7 +1738,7 @@ exports.ERR_WASNOSUCHNICK = function(r_nickname) {
 
 	var re = undefined;
 
-	var f_param = "<nickname> ";
+	var f_param = "<nickname>";
 	re = new RegExp("<nickname>", "g");
 	f_param = f_param.replace(re, r_nickname);
 
@@ -1743,7 +1759,7 @@ exports.ERR_TOOMANYTARGETS = function(r_target, r_error_code, r_abort_message) {
 
 	var re = undefined;
 
-	var f_param = "<target> ";
+	var f_param = "<target>";
 	re = new RegExp("<target>", "g");
 	f_param = f_param.replace(re, r_target);
 	re = new RegExp("<error code>", "g");
@@ -1772,7 +1788,7 @@ exports.ERR_NOSUCHSERVICE = function(r_service_name) {
 
 	var re = undefined;
 
-	var f_param = "<service name> ";
+	var f_param = "<service name>";
 	re = new RegExp("<service name>", "g");
 	f_param = f_param.replace(re, r_service_name);
 
@@ -1840,7 +1856,7 @@ exports.ERR_NOTOPLEVEL = function(r_mask) {
 
 	var re = undefined;
 
-	var f_param = "<mask> ";
+	var f_param = "<mask>";
 	re = new RegExp("<mask>", "g");
 	f_param = f_param.replace(re, r_mask);
 
@@ -1861,7 +1877,7 @@ exports.ERR_WILDTOPLEVEL = function(r_mask) {
 
 	var re = undefined;
 
-	var f_param = "<mask> ";
+	var f_param = "<mask>";
 	re = new RegExp("<mask>", "g");
 	f_param = f_param.replace(re, r_mask);
 
@@ -1882,7 +1898,7 @@ exports.ERR_BADMASK = function(r_mask) {
 
 	var re = undefined;
 
-	var f_param = "<mask> ";
+	var f_param = "<mask>";
 	re = new RegExp("<mask>", "g");
 	f_param = f_param.replace(re, r_mask);
 
@@ -1903,7 +1919,7 @@ exports.ERR_UNKNOWNCOMMAND = function(r_command) {
 
 	var re = undefined;
 
-	var f_param = "<command> ";
+	var f_param = "<command>";
 	re = new RegExp("<command>", "g");
 	f_param = f_param.replace(re, r_command);
 
@@ -1939,7 +1955,7 @@ exports.ERR_NOADMININFO = function(r_server) {
 
 	var re = undefined;
 
-	var f_param = "<server> ";
+	var f_param = "<server>";
 	re = new RegExp("<server>", "g");
 	f_param = f_param.replace(re, r_server);
 
@@ -1994,7 +2010,7 @@ exports.ERR_ERRONEUSNICKNAME = function(r_nick) {
 
 	var re = undefined;
 
-	var f_param = "<nick> ";
+	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
 
@@ -2015,7 +2031,7 @@ exports.ERR_NICKNAMEINUSE = function(r_nick) {
 
 	var re = undefined;
 
-	var f_param = "<nick> ";
+	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
 
@@ -2036,7 +2052,7 @@ exports.ERR_NICKCOLLISION = function(r_nick, r_user, r_host) {
 
 	var re = undefined;
 
-	var f_param = "<nick> ";
+	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
 	re = new RegExp("<user>", "g");
@@ -2065,7 +2081,7 @@ exports.ERR_UNAVAILRESOURCE = function(r_nick_channel) {
 
 	var re = undefined;
 
-	var f_param = "<nick/channel> ";
+	var f_param = "<nick/channel>";
 	re = new RegExp("<nick/channel>", "g");
 	f_param = f_param.replace(re, r_nick_channel);
 
@@ -2086,7 +2102,7 @@ exports.ERR_USERNOTINCHANNEL = function(r_nick, r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<nick> <channel> ";
+	var f_param = "<nick> <channel>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
 	re = new RegExp("<channel>", "g");
@@ -2111,7 +2127,7 @@ exports.ERR_NOTONCHANNEL = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
@@ -2132,7 +2148,7 @@ exports.ERR_USERONCHANNEL = function(r_user, r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<user> <channel> ";
+	var f_param = "<user> <channel>";
 	re = new RegExp("<user>", "g");
 	f_param = f_param.replace(re, r_user);
 	re = new RegExp("<channel>", "g");
@@ -2157,7 +2173,7 @@ exports.ERR_NOLOGIN = function(r_user) {
 
 	var re = undefined;
 
-	var f_param = "<user> ";
+	var f_param = "<user>";
 	re = new RegExp("<user>", "g");
 	f_param = f_param.replace(re, r_user);
 
@@ -2223,7 +2239,7 @@ exports.ERR_NEEDMOREPARAMS = function(r_command) {
 
 	var re = undefined;
 
-	var f_param = "<command> ";
+	var f_param = "<command>";
 	re = new RegExp("<command>", "g");
 	f_param = f_param.replace(re, r_command);
 
@@ -2319,7 +2335,7 @@ exports.ERR_KEYSET = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
@@ -2340,7 +2356,7 @@ exports.ERR_CHANNELISFULL = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
@@ -2361,7 +2377,7 @@ exports.ERR_UNKNOWNMODE = function(r_char, r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<char> ";
+	var f_param = "<char>";
 	re = new RegExp("<char>", "g");
 	f_param = f_param.replace(re, r_char);
 	re = new RegExp("<channel>", "g");
@@ -2386,7 +2402,7 @@ exports.ERR_INVITEONLYCHAN = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
@@ -2407,7 +2423,7 @@ exports.ERR_BANNEDFROMCHAN = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
@@ -2428,7 +2444,7 @@ exports.ERR_BADCHANNELKEY = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
@@ -2449,7 +2465,7 @@ exports.ERR_BADCHANMASK = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
@@ -2470,7 +2486,7 @@ exports.ERR_NOCHANMODES = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
@@ -2491,7 +2507,7 @@ exports.ERR_BANLISTFULL = function(r_channel, r_char) {
 
 	var re = undefined;
 
-	var f_param = "<channel> <char> ";
+	var f_param = "<channel> <char>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 	re = new RegExp("<char>", "g");
@@ -2531,7 +2547,7 @@ exports.ERR_CHANOPRIVSNEEDED = function(r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel> ";
+	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 

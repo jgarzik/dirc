@@ -76,6 +76,16 @@ function ClassSpec(b) {
 		this.cli_by_nick[nick] = conn;
 	};
 
+	Server.prototype.connPing = function(info) {
+		var msg = {
+			prefix: undefined,
+			command: 'PONG',
+			params: this.hostname,
+			trailer: undefined,
+		};
+		this.reply(info.conn, msg);
+	};
+
 	Server.prototype.connUser = function(info) {
 		var conn = info.conn;
 		var user = info.message.user;
@@ -100,19 +110,63 @@ function ClassSpec(b) {
 		conn.user_realname = user[3];
 		this.cli_by_user[username] = conn;
 
-		var msg = IrcReplies.RPL_WELCOME(conn.nick, username,
-						 conn.user_host);
+		var msg = IrcReplies.RPL_WELCOME(conn.nick);
 		this.reply(conn, msg);
 
-		var msg = IrcReplies.RPL_YOURHOST(this.hostname, this.version);
+		var msg = IrcReplies.RPL_YOURHOST(conn.nick, this.hostname,
+						  this.version);
 		this.reply(conn, msg);
 
-		var msg = IrcReplies.RPL_CREATED(this.ctime.toISOString());
+		var msg = IrcReplies.RPL_CREATED(conn.nick,
+						 this.ctime.toISOString());
 		this.reply(conn, msg);
 
-		var msg = IrcReplies.RPL_MYINFO(this.hostname, this.version,
-						this.user_modes,
+		var msg = IrcReplies.RPL_MYINFO(conn.nick, this.hostname,
+						this.version, this.user_modes,
 						this.chan_modes);
+		this.reply(conn, msg);
+	};
+
+	Server.prototype.connWhoisUser = function(conn, mask) {
+		var msg = undefined;
+		if (!(mask in this.cli_by_nick)) {
+			msg = IrcReplies.ERR_NOSUCHNICK(mask);
+			this.reply(conn, msg);
+			return;
+		}
+
+		// TODO: exact match is incorrect. must match mask.
+		var connUser = this.cli_by_nick[mask];
+
+		msg = IrcReplies.RPL_WHOISUSER(connUser.nick,
+					       connUser.user,
+					       connUser.user_host,
+					       connUser.user_realname);
+		this.reply(conn, msg);
+
+		msg = IrcReplies.RPL_WHOISSERVER(connUser.nick,
+						 this.hostname,
+						 "dirc");
+		this.reply(conn, msg);
+	};
+
+	Server.prototype.connWhois = function(info) {
+		var conn = info.conn;
+		var whois = info.message.whois;
+		var masks = whois.masks;
+
+		if (masks.target && masks.target != this.hostname) {
+			var msg = IrcReplies.ERR_NOSUCHSERVER(masks.target);
+			this.reply(conn, msg);
+			return;
+		}
+
+		var us = this;
+		masks.forEach(function(mask) {
+			us.connWhoisUser(conn, mask);
+		});
+
+		var msg = IrcReplies.RPL_ENDOFWHOIS(conn.nick);
 		this.reply(conn, msg);
 	};
 
@@ -130,6 +184,8 @@ function ClassSpec(b) {
 		conn.on('end', function(info) { us.connEnd(info); });
 		conn.on('NICK', function(info) { us.connNick(info); });
 		conn.on('USER', function(info) { us.connUser(info); });
+		conn.on('PING', function(info) { us.connPing(info); });
+		conn.on('WHOIS', function(info) { us.connWhois(info); });
 
 		conn.start();
 	};
