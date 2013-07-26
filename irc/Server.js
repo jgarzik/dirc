@@ -3,6 +3,8 @@ require('classtool');
 function ClassSpec(b) {
 	var net = require('net');
 	var Conn = require('./Conn').class();
+	var IrcReplies = require('./replies');
+	var validate = require('./validate');
 
 	function Server(cfg) {
 		if (typeof cfg !== 'object')
@@ -12,8 +14,18 @@ function ClassSpec(b) {
 		this.version = cfg.server_version;
 		this.srv = undefined;
 		this.clients = [];
+		this.cli_by_nick = {};
+		this.cli_by_user = {};
 		this.ctime = undefined;
+
+		this.user_modes = 'aioOr';
+		this.chan_modes = 'aehiImoOpqrv';
 	};
+
+	Server.prototype.reply = function(conn, msg) {
+		msg.prefix = this.hostname;
+		conn.send(msg);
+	}
 
 	Server.prototype.connEnd = function(info) {
 		var addr = info.conn.remoteAddress;
@@ -25,6 +37,11 @@ function ClassSpec(b) {
 			}
 		}
 
+		if (conn.nick)
+			delete this.cli_by_nick[conn.nick];
+		if (conn.user)
+			delete this.cli_by_user[conn.user];
+
 		console.log('Disconnected', addr);
 	};
 
@@ -33,9 +50,70 @@ function ClassSpec(b) {
 	};
 
 	Server.prototype.connNick = function(info) {
+		var conn = info.conn;
+		var nick = info.message.nick;
+		console.log("HAVE NICK '" + nick + "'");
+		if (!nick) {
+			var msg = IrcReplies.ERR_NONICKNAMEGIVEN();
+			this.reply(conn, msg);
+			return;
+		}
+		if (!validate.nick(nick)) {
+			var msg = IrcReplies.ERR_ERRONEUSNICKNAME(nick);
+			this.reply(conn, msg);
+			return;
+		}
+		if (nick in this.cli_by_nick) {
+			var msg = IrcReplies.ERR_NICKNAMEINUSE(nick);
+			this.reply(conn, msg);
+			return;
+		}
+
+		if (conn.nick)
+			delete this.cli_by_nick[conn.nick];
+
+		conn.nick = nick;
+		this.cli_by_nick[nick] = conn;
 	};
 
 	Server.prototype.connUser = function(info) {
+		var conn = info.conn;
+		var user = info.message.user;
+		var username = user[0];
+		if (!user || user.length < 4 ||
+		    !validate.user(username)) {
+			var msg = IrcReplies.ERR_NEEDMOREPARAMS('USER');
+			this.reply(conn, msg);
+			return;
+		}
+		if (!conn.nick) {
+			var msg = IrcReplies.ERR_NONICKNAMEGIVEN();
+			this.reply(conn, msg);
+			return;
+		}
+
+		if (conn.user)
+			delete this.cli_by_user[conn.user];
+
+		conn.user = username;
+		conn.user_host = user[2];
+		conn.user_realname = user[3];
+		this.cli_by_user[username] = conn;
+
+		var msg = IrcReplies.RPL_WELCOME(conn.nick, username,
+						 conn.user_host);
+		this.reply(conn, msg);
+
+		var msg = IrcReplies.RPL_YOURHOST(this.hostname, this.version);
+		this.reply(conn, msg);
+
+		var msg = IrcReplies.RPL_CREATED(this.ctime.toISOString());
+		this.reply(conn, msg);
+
+		var msg = IrcReplies.RPL_MYINFO(this.hostname, this.version,
+						this.user_modes,
+						this.chan_modes);
+		this.reply(conn, msg);
 	};
 
 	Server.prototype.connNew = function(connSocket) {

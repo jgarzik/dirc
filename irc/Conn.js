@@ -13,12 +13,14 @@ function ClassSpec(b) {
 		// optionally set by owner
 		this.user = undefined;
 		this.user_host = undefined;
+		this.user_realname = undefined;
 		this.nick = undefined;
 	};
 	Conn.superclass = b.superclass || require('events').EventEmitter;
 
 	function me_user(msg) {
 		msg.user = msg.irc_params.split(' ');
+		msg.user.push(msg.irc_trailer);
 	}
 
 	function me_pass(msg) {
@@ -119,12 +121,12 @@ function ClassSpec(b) {
 	Conn.prototype.send = function(msg) {
 		line = '';
 		if (msg.prefix)
-			line += ':' + prefix + ' ';
+			line += ':' + msg.prefix + ' ';
 		line += msg.command;
 		if (msg.params)
-			line += ' ' + params;
+			line += ' ' + msg.params;
 		if (msg.trailer)
-			line += ' :' + trailer;
+			line += ' :' + msg.trailer;
 		line += "\r\n";
 
 		this.sock.write(line, 'binary');
