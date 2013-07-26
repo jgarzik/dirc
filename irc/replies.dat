@@ -1,4 +1,4 @@
-RPL_WELCOME "Welcome to the Internet Relay Network <nick>!<user>@<host>"
+RPL_WELCOME "Welcome to the Internet Relay Network <nick>"
 RPL_YOURHOST "Your host is <servername>, running version <ver>"
 RPL_CREATED "This server was created <date>"
 RPL_MYINFO "<servername> <version> <available user modes> <available channel modes>" 

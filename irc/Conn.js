@@ -8,6 +8,7 @@ function ClassSpec(b) {
 		this.partial = '';
 		this.srv = cfg.srv;
 		this.sock = cfg.socket;
+		this.trace = cfg.trace || {};
 		this.remoteAddress = this.sock.remoteAddress;
 
 		// optionally set by owner
@@ -43,6 +44,9 @@ function ClassSpec(b) {
 	}
 
 	Conn.prototype.sockData = function(dataIn) {
+		if (this.trace.netRead)
+			console.log("NETREAD:" + dataIn);
+
 		// append to existing buffer
 		this.partial += String(dataIn);
 
@@ -129,54 +133,10 @@ function ClassSpec(b) {
 			line += ' :' + msg.trailer;
 		line += "\r\n";
 
+		if (this.trace.netWrite)
+			console.log('NETWRITE:' + line);
+
 		this.sock.write(line, 'binary');
-	};
-
-	Conn.prototype.rplWelcome = function() {
-		var msg = {
-			prefix: this.srv.hostname,
-			command: RPL.WELCOME,
-			params: this.nick,
-			trailer: "Welcome to the Internet Relay Network <" +
-				this.nick + ">!<" + this.user + ">@<" +
-				this.user_host + ">",
-		};
-		this.send(msg);
-	};
-
-	Conn.prototype.rplYourHost = function() {
-		var msg = {
-			prefix: this.srv.hostname,
-			command: RPL.YOURHOST,
-			params: this.nick,
-			trailer: "Your host is " + this.srv.hostname +
-				", running version " + this.srv.version,
-		};
-		this.send(msg);
-	};
-
-	Conn.prototype.rplCreated = function() {
-		var msg = {
-			prefix: this.srv.hostname,
-			command: RPL.CREATED,
-			params: this.nick,
-			trailer: "This server was created " +
-				this.srv.ctime.toISOString(),
-		};
-		this.send(msg);
-	};
-
-	Conn.prototype.rplMyInfo = function() {
-		var msg = {
-			prefix: this.srv.hostname,
-			command: RPL.MYINFO,
-			params: this.nick,
-			trailer: this.srv.hostname + " " +
-				 this.srv.version + " " +
-				 "umodes " +
-				 "chanmodes",
-		};
-		this.send(msg);
 	};
 
 	return Conn;

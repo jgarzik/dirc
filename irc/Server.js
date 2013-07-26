@@ -12,6 +12,7 @@ function ClassSpec(b) {
 		this.port = cfg.port || 12667;
 		this.hostname = cfg.hostname || 'localhost';
 		this.version = cfg.server_version;
+		this.trace = cfg.trace;
 		this.srv = undefined;
 		this.clients = [];
 		this.cli_by_nick = {};
@@ -52,7 +53,6 @@ function ClassSpec(b) {
 	Server.prototype.connNick = function(info) {
 		var conn = info.conn;
 		var nick = info.message.nick;
-		console.log("HAVE NICK '" + nick + "'");
 		if (!nick) {
 			var msg = IrcReplies.ERR_NONICKNAMEGIVEN();
 			this.reply(conn, msg);
@@ -121,6 +121,7 @@ function ClassSpec(b) {
 		var conn = new Conn({
 			srv: this,
 			socket: connSocket,
+			trace: this.trace,
 		});
 		this.clients.push(conn);
 

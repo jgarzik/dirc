@@ -5,18 +5,14 @@ var RPL = require('./RPL');
 
 
 
-// RPL_WELCOME "Welcome to the Internet Relay Network <nick>!<user>@<host>"
-exports.RPL_WELCOME = function(r_nick, r_user, r_host) {
+// RPL_WELCOME "Welcome to the Internet Relay Network <nick>"
+exports.RPL_WELCOME = function(r_nick) {
 
 	var re = undefined;
 
-	var f_trailer = "Welcome to the Internet Relay Network <nick>!<user>@<host>";
+	var f_trailer = "Welcome to the Internet Relay Network <nick>";
 	re = new RegExp("<nick>", "g");
 	f_trailer = f_trailer.replace(re, r_nick);
-	re = new RegExp("<user>", "g");
-	f_trailer = f_trailer.replace(re, r_user);
-	re = new RegExp("<host>", "g");
-	f_trailer = f_trailer.replace(re, r_host);
 
 	return {
 		prefix: undefined,
