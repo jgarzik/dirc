@@ -19,6 +19,22 @@ function ClassSpec(b) {
 	};
 	Conn.superclass = b.superclass || require('events').EventEmitter;
 
+	function me_mode(msg) {
+		var v = msg.irc_params.split(' ');
+		if (v.length < 2)
+			return;
+
+		var nick = v[0];
+		v.splice(0, 1);
+
+		var modes = v.join(' ');
+
+		msg.mode = {
+			nick: nick,
+			modes: modes,
+		};
+	}
+
 	function me_nick(msg) {
 		msg.nick = msg.irc_params;
 	}
@@ -32,11 +48,28 @@ function ClassSpec(b) {
 		msg.user.push(msg.irc_trailer);
 	}
 
+	function me_whois(msg) {
+		var params = msg.irc_params.split(' ');
+		var target = params[0];
+		var maskstr = params[1];
+		if (!maskstr) {
+			target = undefined;
+			maskstr = params[0];
+		}
+		var masks = maskstr.split(',');
+		msg.whois = {
+			target: target,
+			masks: masks,
+		};
+	}
+
 	function msgExpand(msg) {
 		switch (msg.irc_command) {
+		case 'MODE': me_mode(msg); break;
 		case 'NICK': me_nick(msg); break;
 		case 'PASS': me_pass(msg); break;
 		case 'USER': me_user(msg); break;
+		case 'WHOIS': me_whois(msg); break;
 		default:
 			// do nothing
 			break;
@@ -45,7 +78,7 @@ function ClassSpec(b) {
 
 	Conn.prototype.sockData = function(dataIn) {
 		if (this.trace.netRead)
-			console.log("NETREAD:" + dataIn);
+			console.log("NETREAD " + dataIn);
 
 		// append to existing buffer
 		this.partial += String(dataIn);
@@ -95,11 +128,11 @@ function ClassSpec(b) {
 				message: msg,
 			};
 
-			// emit message based on IRC command
-			this.emit(command, emitArgs);
-
 			// general message tap
 			this.emit('message', emitArgs);
+
+			// emit message based on IRC command
+			this.emit(command, emitArgs);
 		}
 	};
 
@@ -134,7 +167,7 @@ function ClassSpec(b) {
 		line += "\r\n";
 
 		if (this.trace.netWrite)
-			console.log('NETWRITE:' + line);
+			console.log('NETWRITE ' + line);
 
 		this.sock.write(line, 'binary');
 	};
