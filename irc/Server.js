@@ -3,6 +3,7 @@ require('classtool');
 function ClassSpec(b) {
 	var net = require('net');
 	var Conn = require('./Conn').class();
+	var ConnMgr = require('./ConnMgr').class();
 	var IrcReplies = require('./replies');
 	var validate = require('./validate');
 
@@ -14,9 +15,7 @@ function ClassSpec(b) {
 		this.version = cfg.server_version;
 		this.trace = cfg.trace;
 		this.srv = undefined;
-		this.clients = [];
-		this.cli_by_nick = {};
-		this.cli_by_user = {};
+		this.connmgr = new ConnMgr();
 		this.ctime = undefined;
 
 		this.user_modes = 'aiwroOs';
@@ -31,17 +30,8 @@ function ClassSpec(b) {
 	Server.prototype.connEnd = function(info) {
 		var addr = info.conn.remoteAddress;
 		var conn = info.conn;
-		for (var i = 0; i < this.clients.length; i++) {
-			if (this.clients[i] == conn) {
-				this.clients.splice(i, 1);
-				break;
-			}
-		}
 
-		if (conn.nick)
-			delete this.cli_by_nick[conn.nick];
-		if (conn.user)
-			delete this.cli_by_user[conn.user];
+		this.connmgr.delete(conn);
 
 		console.log('Disconnected', addr);
 	};
@@ -63,17 +53,13 @@ function ClassSpec(b) {
 			this.reply(conn, msg);
 			return;
 		}
-		if (nick in this.cli_by_nick) {
+		if (this.connmgr.get(nick)) {
 			var msg = IrcReplies.ERR_NICKNAMEINUSE(nick);
 			this.reply(conn, msg);
 			return;
 		}
 
-		if (conn.nick)
-			delete this.cli_by_nick[conn.nick];
-
-		conn.nick = nick;
-		this.cli_by_nick[nick] = conn;
+		this.connmgr.setNick(conn, nick);
 	};
 
 	Server.prototype.connPing = function(info) {
@@ -118,13 +104,9 @@ function ClassSpec(b) {
 			return;
 		}
 
-		if (conn.user)
-			delete this.cli_by_user[conn.user];
-
-		conn.user = username;
+		this.connmgr.setUser(conn, username);
 		conn.user_host = user[2];
 		conn.user_realname = user[3];
-		this.cli_by_user[username] = conn;
 
 		var msg = IrcReplies.RPL_WELCOME(conn.nick);
 		this.reply(conn, msg);
@@ -146,14 +128,14 @@ function ClassSpec(b) {
 
 	Server.prototype.connWhoisUser = function(conn, mask) {
 		var msg = undefined;
-		if (!(mask in this.cli_by_nick)) {
+
+		// TODO: exact match is incorrect. must match mask.
+		var connUser = this.connmgr.get(mask);
+		if (!connUser) {
 			msg = IrcReplies.ERR_NOSUCHNICK(mask);
 			this.reply(conn, msg);
 			return;
 		}
-
-		// TODO: exact match is incorrect. must match mask.
-		var connUser = this.cli_by_nick[mask];
 
 		msg = IrcReplies.RPL_WHOISUSER(connUser.nick,
 					       connUser.user,
@@ -194,7 +176,7 @@ function ClassSpec(b) {
 			socket: connSocket,
 			trace: this.trace,
 		});
-		this.clients.push(conn);
+		this.connmgr.add(conn);
 
 		var us = this;
 		conn.on('message', function(info) { us.connMessage(info); });
