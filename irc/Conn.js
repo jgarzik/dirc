@@ -19,24 +19,24 @@ function ClassSpec(b) {
 	};
 	Conn.superclass = b.superclass || require('events').EventEmitter;
 
-	function me_user(msg) {
-		msg.user = msg.irc_params.split(' ');
-		msg.user.push(msg.irc_trailer);
+	function me_nick(msg) {
+		msg.nick = msg.irc_params;
 	}
 
 	function me_pass(msg) {
 		msg.pass = msg.irc_params;
 	}
 
-	function me_nick(msg) {
-		msg.nick = msg.irc_params;
+	function me_user(msg) {
+		msg.user = msg.irc_params.split(' ');
+		msg.user.push(msg.irc_trailer);
 	}
 
 	function msgExpand(msg) {
 		switch (msg.irc_command) {
-		case 'USER': me_user(msg); break;
-		case 'PASS': me_pass(msg); break;
 		case 'NICK': me_nick(msg); break;
+		case 'PASS': me_pass(msg); break;
+		case 'USER': me_user(msg); break;
 		default:
 			// do nothing
 			break;
