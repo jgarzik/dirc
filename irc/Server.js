@@ -4,6 +4,9 @@ function ClassSpec(b) {
 	var net = require('net');
 	var Conn = require('./Conn').class();
 	var ConnMgr = require('./ConnMgr').class();
+	var Channel = require('./Channel').class();
+	var ChanUser = require('./ChanUser').class();
+	var ChanMgr = require('./ChanMgr').class();
 	var IrcReplies = require('./replies');
 	var validate = require('./validate');
 
@@ -16,6 +19,7 @@ function ClassSpec(b) {
 		this.trace = cfg.trace;
 		this.srv = undefined;
 		this.connmgr = new ConnMgr();
+		this.chanmgr = new ChanMgr();
 		this.ctime = undefined;
 
 		this.user_modes = 'aiwroOs';
@@ -49,6 +53,62 @@ function ClassSpec(b) {
 		console.log(info.socket.remoteAddress, ":", info.message);
 	};
 
+	// TODO: support more than one channel per command
+	Server.prototype.connJoin = function(info) {
+		var conn = info.conn;
+		var chan_name = info.message.irc_params;
+		if (!chan_name) {
+			var msg = IrcReplies.ERR_NEEDMOREPARAMS('USER');
+			this.reply(conn, msg);
+			return;
+		}
+		if (!validate.channel(chan_name)) {
+			var msg = IrcReplies.ERR_BADCHANMASK(chan_name);
+			this.reply(conn, msg);
+			return;
+		}
+
+		var newChan = false;
+		var chan = this.chanmgr.get(chan_name);
+		if (!chan) {
+			chan = new Channel({ chan_name: chan_name });
+			this.chanmgr.add(chan);
+			newChan = true;
+		}
+
+		var user = chan.get(conn.nick);
+		if (user)
+			return;
+		user = new ChanUser({ conn: conn });
+		if (newChan)
+			user.flags.op = true;
+
+		chan.add(user);
+
+		var msg = {
+			prefix: composeUserStr(conn),
+			command: 'JOIN',
+			params: chan_name,
+			trailer: undefined,
+		};
+
+		chan.send(msg);
+
+		// TODO: send names list 353, 366
+	};
+
+	Server.prototype.connList = function(info) {
+		var conn = info.conn;
+		var list = this.chanmgr.getList();
+		var us = this;
+		list.forEach(function(msg) {
+			us.reply(conn, msg);
+		});
+
+		var msg = IrcReplies.RPL_LISTEND();
+		this.reply(conn, msg);
+	};
+
 	Server.prototype.connNick = function(info) {
 		var conn = info.conn;
 		var nick = info.message.nick;
@@ -69,6 +129,40 @@ function ClassSpec(b) {
 		}
 
 		this.connmgr.setNick(conn, nick);
+	};
+
+	// TODO: support more than one channel per command
+	Server.prototype.connPart = function(info) {
+		var conn = info.conn;
+		var chan_name = info.message.irc_params;
+
+		var chan = this.chanmgr.get(chan_name);
+		if (!chan) {
+			var msg = IrcReplies.ERR_NOSUCHCHANNEL(chan_name);
+			this.reply(conn, msg);
+			return;
+		}
+
+		var chanUser = chan.get(conn.nick);
+		if (!chanUser) {
+			var msg = IrcReplies.ERR_NOTONCHANNEL(chan_name);
+			this.reply(conn, msg);
+			return;
+		}
+
+		var msg = {
+			prefix: composeUserStr(conn),
+			command: 'PART',
+			params: chan_name,
+			trailer: info.message.irc_trailer,
+		};
+
+		chan.send(msg);
+
+		chan.delete(conn.nick);
+
+		if (chan.nUsers() == 0)
+			this.chanmgr.delete(chan_name);
 	};
 
 	Server.prototype.connPing = function(info) {
@@ -203,10 +297,13 @@ function ClassSpec(b) {
 		var us = this;
 		conn.on('message', function(info) { us.connMessage(info); });
 		conn.on('end', function(info) { us.connEnd(info); });
+		conn.on('JOIN', function(info) { us.connJoin(info); });
+		conn.on('LIST', function(info) { us.connList(info); });
 		conn.on('NICK', function(info) { us.connNick(info); });
-		conn.on('USER', function(info) { us.connUser(info); });
+		conn.on('PART', function(info) { us.connPart(info); });
 		conn.on('PING', function(info) { us.connPing(info); });
 		conn.on('QUIT', function(info) { us.connQuit(info); });
+		conn.on('USER', function(info) { us.connUser(info); });
 		conn.on('WHOIS', function(info) { us.connWhois(info); });
 
 		conn.start();
