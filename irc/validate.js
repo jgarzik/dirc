@@ -5,6 +5,9 @@ exports.nick = function(nick) {
 };
 
 exports.channel = function(channel) {
+	if (channel.length > 50)
+		return false;
+
 	var re = new RegExp("^[&|#][^, "+String.fromCharCode(7)+"]+$", "i");
 	return channel.match(re);
 };

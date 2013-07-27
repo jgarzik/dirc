@@ -31,6 +31,10 @@ function ClassSpec(b) {
 		}
 	};
 
+	Channel.prototype.hasUser = function(nick) {
+		return (nick in this.users);
+	};
+
 	Channel.prototype.nUsers = function() {
 		return Object.keys(this.users).length;
 	};

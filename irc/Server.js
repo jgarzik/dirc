@@ -191,6 +191,64 @@ function ClassSpec(b) {
 		this.reply(conn, msg);
 	};
 
+	Server.prototype.connPrivMsgChan = function(info) {
+		var conn = info.conn;
+		var chanName = info.message.irc_params;
+		var text = info.message.irc_trailer;
+
+		var chan = this.chanmgr.get(chanName);
+		if (!chan) {
+			var msg = IrcReplies.ERR_NOSUCHCHANNEL(chanName);
+			this.reply(conn, msg);
+			return;
+		}
+
+		if (!chan.hasUser(conn.nick)) {
+			var msg = IrcReplies.ERR_CANNOTSENDTOCHAN(chanName);
+			this.reply(conn, msg);
+			return;
+		}
+
+		var msg = {
+			prefix: composeUserStr(conn),
+			command: 'PRIVMSG',
+			params: chanName,
+			trailer: text,
+		};
+
+		chan.send(msg);
+	};
+
+	Server.prototype.connPrivMsgUser = function(info) {
+		var conn = info.conn;
+		var target = info.message.irc_params;
+		var text = info.message.irc_trailer;
+
+		var remote = this.connmgr.get(target);
+		if (!remote) {
+			msg = IrcReplies.ERR_NOSUCHNICK(target);
+			this.reply(conn, msg);
+			return;
+		}
+
+		var msg = {
+			prefix: composeUserStr(conn),
+			command: 'PRIVMSG',
+			params: target,
+			trailer: text,
+		};
+
+		remote.send(msg);
+	};
+
+	Server.prototype.connPrivMsg = function(info) {
+		var target = info.message.irc_params;
+		if (validate.channel(target))
+			this.connPrivMsgChan(info);
+		else
+			this.connPrivMsgUser(info);
+	};
+
 	Server.prototype.connQuit = function(info) {
 		var trailer = info.message.irc_trailer || 'Client Quit';
 		var msg = {
@@ -302,6 +360,7 @@ function ClassSpec(b) {
 		conn.on('NICK', function(info) { us.connNick(info); });
 		conn.on('PART', function(info) { us.connPart(info); });
 		conn.on('PING', function(info) { us.connPing(info); });
+		conn.on('PRIVMSG', function(info) { us.connPrivMsg(info); });
 		conn.on('QUIT', function(info) { us.connQuit(info); });
 		conn.on('USER', function(info) { us.connUser(info); });
 		conn.on('WHOIS', function(info) { us.connWhois(info); });
