@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 var fs = require('fs');
+var http = require('http');
+var util = require('util');
 var program = require('commander');
 var DIRC_VERSION = '0.0.1';
 
@@ -12,6 +14,7 @@ program
 var cfg = undefined;
 var irc = undefined;
 var p2p = undefined;
+var httpsrv = undefined;
 
 function read_config()
 {
@@ -23,10 +26,15 @@ function read_config()
 		process.exit(1);
 	}
 
-	// some hardcoded additions
+	// some hardcoded additions or defaults
 	if (typeof cfg.irc !== 'object')
 		cfg.irc = {};
 	cfg.irc.server_version = DIRC_VERSION;
+
+	if (typeof cfg.http !== 'object')
+		cfg.http = {};
+	cfg.http.port = cfg.http.port || 9394;
+	cfg.http.host = cfg.http.host || 'localhost';
 }
 
 function start_irc()
@@ -37,10 +45,40 @@ function start_irc()
 	irc.start();
 }
 
+function text_resp(resp, code, text)
+{
+	resp.writeHead(code, {
+		'Content-length': text.length,
+		'Content-type': 'text/plain',
+	});
+
+	resp.write(text);
+	resp.end();
+}
+
+function http_request(req, resp)
+{
+	var purl = require('url').parse(req.url);
+
+	if ((req.method == 'GET') &&
+	    (purl.pathname == '/irc-status.txt')) {
+		var text = util.inspect(irc, { depth: 1000 });
+		text_resp(resp, 200, text);
+	} else
+		text_resp(resp, 404, 'not found');
+}
+
+function start_http()
+{
+	httpsrv = http.createServer(http_request);
+	httpsrv.listen(cfg.http.port, cfg.http.host);
+}
+
 function main()
 {
 	read_config();
 	start_irc();
+	start_http();
 }
 
 main();
