@@ -76,12 +76,22 @@ function ClassSpec(b) {
 		}
 	}
 
+	function logLines(dataIn) {
+		dataIn = dataIn.replace(/\s\s*$/, '');
+		var lines = dataIn.split("\n");
+		lines.forEach(function(line) {
+			console.log("C> " + line.replace(/\s\s*$/, ''));
+		});
+	};
+
 	Conn.prototype.sockData = function(dataIn) {
+		dataIn = String(dataIn);
+
 		if (this.trace.netRead)
-			console.log("NETREAD " + dataIn);
+			logLines(dataIn);
 
 		// append to existing buffer
-		this.partial += String(dataIn);
+		this.partial += dataIn;
 
 		while (1) {
 			var skip = 0;
@@ -167,7 +177,7 @@ function ClassSpec(b) {
 		line += "\r\n";
 
 		if (this.trace.netWrite)
-			console.log('NETWRITE ' + line);
+			console.log('<S ' + line.replace(/\s\s*$/, ''));
 
 		this.sock.write(line, 'binary');
 	};

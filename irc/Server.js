@@ -353,7 +353,7 @@ function ClassSpec(b) {
 		this.connmgr.add(conn);
 
 		var us = this;
-		conn.on('message', function(info) { us.connMessage(info); });
+		// conn.on('message', function(info) { us.connMessage(info); });
 		conn.on('end', function(info) { us.connEnd(info); });
 		conn.on('JOIN', function(info) { us.connJoin(info); });
 		conn.on('LIST', function(info) { us.connList(info); });
