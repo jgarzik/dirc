@@ -16,6 +16,7 @@ function ClassSpec(b) {
 		this.user_host = undefined;
 		this.user_realname = undefined;
 		this.nick = undefined;
+		this.channels = {};
 	};
 	Conn.superclass = b.superclass || require('events').EventEmitter;
 

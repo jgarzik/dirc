@@ -14,6 +14,15 @@ function ClassSpec(b) {
 		delete this.channels[chanName];
 	};
 
+	ChanMgr.prototype.deleteConn = function(conn) {
+		for (var chanName in conn.channels) {
+			var chan = this.channels[chanName];
+			var empty = chan.delete(conn.nick);
+			if (empty)
+				this.delete(chanName);
+		}
+	};
+
 	ChanMgr.prototype.add = function(chan) {
 		this.channels[chan.name] = chan;
 	};

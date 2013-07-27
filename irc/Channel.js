@@ -17,11 +17,22 @@ function ClassSpec(b) {
 	};
 
 	Channel.prototype.add = function(user) {
-		this.users[user.conn.nick] = user;
+		var conn = user.conn;
+		this.users[conn.nick] = user;
+		conn.channels[this.name] = true;
 	};
 
 	Channel.prototype.delete = function(nick) {
+		if (!(nick in this.users))
+			return;
+
+		var user = this.users[nick];
 		delete this.users[nick];
+
+		var conn = user.conn;
+		delete conn.channels[this.name];
+
+		return (Object.keys(this.users).length == 0); // channel empty?
 	};
 
 	Channel.prototype.send = function(msg) {

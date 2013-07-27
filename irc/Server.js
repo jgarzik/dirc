@@ -44,6 +44,7 @@ function ClassSpec(b) {
 		var addr = info.conn.remoteAddress;
 		var conn = info.conn;
 
+		this.chanmgr.deleteConn(conn);
 		this.connmgr.delete(conn);
 
 		console.log('Disconnected', addr);
@@ -159,9 +160,8 @@ function ClassSpec(b) {
 
 		chan.send(msg);
 
-		chan.delete(conn.nick);
-
-		if (chan.nUsers() == 0)
+		var empty = chan.delete(conn.nick);
+		if (empty)
 			this.chanmgr.delete(chan_name);
 	};
 
