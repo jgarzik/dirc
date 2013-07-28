@@ -35,8 +35,11 @@ function ClassSpec(b) {
 		return (Object.keys(this.users).length == 0); // channel empty?
 	};
 
-	Channel.prototype.send = function(msg) {
+	Channel.prototype.send = function(msg, skipNick) {
 		for (var nick in this.users) {
+			if (skipNick && (nick == skipNick))
+				continue;
+
 			user = this.users[nick];
 			user.conn.send(msg);
 		}

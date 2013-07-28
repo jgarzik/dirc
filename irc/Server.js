@@ -266,7 +266,7 @@ function ClassSpec(b) {
 			trailer: text,
 		};
 
-		chan.send(msg);
+		chan.send(msg, conn.nick);
 	};
 
 	Server.prototype.connPrivMsgUser = function(info) {
