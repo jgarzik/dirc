@@ -50,6 +50,19 @@ function ClassSpec(b) {
 		return Object.keys(this.users).length;
 	};
 
+	Channel.prototype.userList = function() {
+		var res = [];
+		for (var nick in this.users) {
+			user = this.users[nick];
+			var s = nick;
+			if ('op' in user.flags)
+				s = '@' + s;
+			res.push(s);
+		}
+
+		return res;
+	}
+
 	return Channel;
 };
 module.defineClass(ClassSpec);

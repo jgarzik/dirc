@@ -7,6 +7,7 @@ function ClassSpec(b) {
 	var Channel = require('./Channel').class();
 	var ChanUser = require('./ChanUser').class();
 	var ChanMgr = require('./ChanMgr').class();
+	var RPL = require('./RPL');
 	var IrcReplies = require('./replies');
 	var validate = require('./validate');
 
@@ -95,7 +96,56 @@ function ClassSpec(b) {
 
 		chan.send(msg);
 
-		// TODO: send names list 353, 366
+		if (chan.topic) {
+			msg = IrcReplies.RPL_TOPIC(chan_name, chan.topic);
+			this.reply(conn, msg);
+		} else {
+			msg = IrcReplies.RPL_NOTOPIC(chan_name);
+			this.reply(conn, msg);
+		}
+
+		var userList = chan.userList();
+		var us = this;
+		var msgTemp = {
+			prefix: us.hostname,
+			command: RPL.NAMREPLY,
+			params: conn.nick + ' ' +
+				'= ' +
+				chan_name,
+		};
+
+		var trailer = '';
+		userList.forEach(function(datum) {
+			if (!trailer) {
+				trailer = datum;
+			} else {
+				trailer += ' ' + datum;
+			}
+
+			if (trailer.length > 350) {
+				msg = {
+					prefix: msgTemp.prefix,
+					command: msgTemp.command,
+					params: msgTemp.params,
+					trailer: trailer,
+				};
+				conn.send(msg);
+
+				trailer = '';
+			}
+		});
+		if (trailer) {
+			msg = {
+				prefix: msgTemp.prefix,
+				command: msgTemp.command,
+				params: msgTemp.params,
+				trailer: trailer,
+			};
+			conn.send(msg);
+		}
+
+		msg = IrcReplies.RPL_ENDOFNAMES(conn.nick, chan_name);
+		this.reply(conn, msg);
 	};
 
 	Server.prototype.connList = function(info) {

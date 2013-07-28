@@ -666,16 +666,20 @@ exports.RPL_ENDOFWHO = function(r_name) {
 	};
 };
 
-// RPL_ENDOFNAMES "<channel> :End of NAMES list"
-exports.RPL_ENDOFNAMES = function(r_channel) {
+// RPL_ENDOFNAMES "<nick> <channel> :End of NAMES list"
+exports.RPL_ENDOFNAMES = function(r_nick, r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel>";
+	var f_param = "<nick> <channel>";
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "End of NAMES list";
+	re = new RegExp("<nick>", "g");
+	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<channel>", "g");
 	f_trailer = f_trailer.replace(re, r_channel);
 
