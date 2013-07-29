@@ -49,6 +49,15 @@ function ClassSpec(b) {
 		this.cli_by_user[user] = conn;
 	};
 
+	ConnMgr.prototype.sendCommonChan = function(connRemote, msg) {
+		this.cli.forEach(function(conn) {
+			if (conn.active &&
+			    (conn != connRemote) &&
+			    conn.commonChan(connRemote))
+				conn.send(msg);
+		});
+	};
+
 	return ConnMgr;
 };
 module.defineClass(ClassSpec);

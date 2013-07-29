@@ -17,6 +17,7 @@ function ClassSpec(b) {
 		this.user_realname = undefined;
 		this.nick = undefined;
 		this.channels = {};
+		this.active = false;
 	};
 	Conn.superclass = b.superclass || require('events').EventEmitter;
 
@@ -190,6 +191,14 @@ function ClassSpec(b) {
 		this.sock.destroy();
 		this.sock = undefined;
 	};
+
+	Conn.prototype.commonChan = function(connRemote) {
+		for (var chanName in connRemote.channels)
+			if (chanName in this.channels)
+				return true;
+
+		return false;
+	}
 
 	return Conn;
 };

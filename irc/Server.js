@@ -41,10 +41,20 @@ function ClassSpec(b) {
 		conn.send(msg);
 	}
 
-	Server.prototype.connEnd = function(info) {
+	Server.prototype.connEnd = function(info, quitMsg) {
 		var addr = info.conn.remoteAddress;
 		var conn = info.conn;
 
+		if (!quitMsg) {
+			quitMsg = {
+				prefix: composeUserStr(conn),
+				command: 'QUIT',
+				params: undefined,
+				trailer: 'Remote host closed the connection',
+			};
+		}
+
+		this.connmgr.sendCommonChan(quitMsg);
 		this.chanmgr.deleteConn(conn);
 		this.connmgr.delete(conn);
 
@@ -309,7 +319,7 @@ function ClassSpec(b) {
 		};
 		replyUser(info.conn, msg);
 
-		this.connEnd(info);
+		this.connEnd(info, msg);
 	};
 
 	Server.prototype.connUser = function(info) {
@@ -348,6 +358,8 @@ function ClassSpec(b) {
 						this.user_modes,
 						this.chan_modes);
 		this.reply(conn, msg);
+
+		conn.active = true;
 	};
 
 	Server.prototype.connWhoisUser = function(conn, mask) {
