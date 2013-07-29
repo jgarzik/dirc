@@ -123,7 +123,7 @@ function ClassSpec(b) {
 				return;
 			}
 
-			var command = res[3];
+			var command = res[3].toUpperCase();
 			var msg = {
 				irc_prefix: res[2],
 				irc_command: command,
