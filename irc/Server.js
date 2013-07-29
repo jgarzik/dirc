@@ -68,6 +68,12 @@ function ClassSpec(b) {
 	// TODO: support more than one channel per command
 	Server.prototype.connJoin = function(info) {
 		var conn = info.conn;
+		if (!conn.active) {
+			var msg = IrcReplies.ERR_NOTREGISTERED();
+			this.reply(conn, msg);
+			return;
+		}
+
 		var chan_name = info.message.irc_params;
 		if (!chan_name) {
 			var msg = IrcReplies.ERR_NEEDMOREPARAMS('USER');
@@ -160,6 +166,12 @@ function ClassSpec(b) {
 
 	Server.prototype.connList = function(info) {
 		var conn = info.conn;
+		if (!conn.active) {
+			var msg = IrcReplies.ERR_NOTREGISTERED();
+			this.reply(conn, msg);
+			return;
+		}
+
 		var list = this.chanmgr.getList();
 		var us = this;
 		list.forEach(function(msg) {
@@ -195,6 +207,12 @@ function ClassSpec(b) {
 	// TODO: support more than one channel per command
 	Server.prototype.connPart = function(info) {
 		var conn = info.conn;
+		if (!conn.active) {
+			var msg = IrcReplies.ERR_NOTREGISTERED();
+			this.reply(conn, msg);
+			return;
+		}
+
 		var chan_name = info.message.irc_params;
 
 		var chan = this.chanmgr.get(chan_name);
@@ -302,6 +320,12 @@ function ClassSpec(b) {
 	};
 
 	Server.prototype.connPrivMsg = function(info) {
+		if (!info.conn.active) {
+			var msg = IrcReplies.ERR_NOTREGISTERED();
+			this.reply(conn, msg);
+			return;
+		}
+
 		var target = info.message.irc_params;
 		if (validate.channel(target))
 			this.connPrivMsgChan(info);
@@ -387,6 +411,12 @@ function ClassSpec(b) {
 
 	Server.prototype.connWhois = function(info) {
 		var conn = info.conn;
+		if (!conn.active) {
+			var msg = IrcReplies.ERR_NOTREGISTERED();
+			this.reply(conn, msg);
+			return;
+		}
+
 		var whois = info.message.whois;
 		var masks = whois.masks;
 
