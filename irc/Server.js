@@ -54,7 +54,7 @@ function ClassSpec(b) {
 			};
 		}
 
-		this.connmgr.sendCommonChan(quitMsg);
+		this.connmgr.sendCommonChan(conn, quitMsg);
 		this.chanmgr.deleteConn(conn);
 		this.connmgr.delete(conn);
 
