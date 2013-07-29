@@ -58,6 +58,10 @@ function ClassSpec(b) {
 		});
 	};
 
+	ConnMgr.prototype.count = function() {
+		return this.cli.length;
+	};
+
 	return ConnMgr;
 };
 module.defineClass(ClassSpec);

@@ -18,6 +18,7 @@ function ClassSpec(b) {
 		this.hostname = cfg.hostname || 'localhost';
 		this.version = cfg.server_version;
 		this.trace = cfg.trace;
+		this.MOTD = cfg.MOTD;
 		this.srv = undefined;
 		this.connmgr = new ConnMgr();
 		this.chanmgr = new ChanMgr();
@@ -369,18 +370,39 @@ function ClassSpec(b) {
 		var msg = IrcReplies.RPL_WELCOME(conn.nick);
 		this.reply(conn, msg);
 
-		var msg = IrcReplies.RPL_YOURHOST(conn.nick, this.hostname,
-						  'dirc-' +this.version);
+		msg = IrcReplies.RPL_YOURHOST(conn.nick, this.hostname,
+					      'dirc-' +this.version);
 		this.reply(conn, msg);
 
-		var msg = IrcReplies.RPL_CREATED(conn.nick,
-						 this.ctime.toISOString());
+		msg = IrcReplies.RPL_CREATED(conn.nick,
+					     this.ctime.toISOString());
 		this.reply(conn, msg);
 
-		var msg = IrcReplies.RPL_MYINFO(conn.nick, this.hostname,
-						'dirc-' +this.version,
-						this.user_modes,
-						this.chan_modes);
+		msg = IrcReplies.RPL_MYINFO(conn.nick, this.hostname,
+					    'dirc-' +this.version,
+					    this.user_modes,
+					    this.chan_modes);
+		this.reply(conn, msg);
+
+		msg = IrcReplies.RPL_LUSERCLIENT(conn.nick,
+						 this.connmgr.count(),
+						 0, 1);
+		this.reply(conn, msg);
+
+		msg = IrcReplies.RPL_LUSERME(conn.nick,
+					     this.connmgr.count(), 1);
+		this.reply(conn, msg);
+
+		msg = IrcReplies.RPL_MOTDSTART(conn.nick, this.hostname);
+		this.reply(conn, msg);
+
+		if (this.MOTD) {
+			// NOTE: too-long motd silently accepted
+			msg = IrcReplies.RPL_MOTD(conn.nick, this.MOTD);
+			this.reply(conn, msg);
+		}
+
+		msg = IrcReplies.RPL_ENDOFMOTD(conn.nick);
 		this.reply(conn, msg);
 
 		conn.active = true;

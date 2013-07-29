@@ -874,51 +874,73 @@ exports.RPL_ENDOFINFO = function() {
 	};
 };
 
-// RPL_MOTDSTART ":- <server> Message of the day - "
-exports.RPL_MOTDSTART = function(r_server) {
+// RPL_MOTDSTART "<nick> :- <server> Message of the day - "
+exports.RPL_MOTDSTART = function(r_nick, r_server) {
 
 	var re = undefined;
 
+	var f_param = "<nick>";
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
+	re = new RegExp("<server>", "g");
+	f_param = f_param.replace(re, r_server);
+
 	var f_trailer = "- <server> Message of the day - ";
+	re = new RegExp("<nick>", "g");
+	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<server>", "g");
 	f_trailer = f_trailer.replace(re, r_server);
 
 	return {
 		prefix: undefined,
 		command: RPL.MOTDSTART,
-		params: undefined,
+		params: f_param,
 		trailer: f_trailer,
 	};
 };
 
-// RPL_MOTD ":- <text>"
-exports.RPL_MOTD = function(r_text) {
+// RPL_MOTD "<nick> :- <text>"
+exports.RPL_MOTD = function(r_nick, r_text) {
 
 	var re = undefined;
 
+	var f_param = "<nick>";
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
+	re = new RegExp("<text>", "g");
+	f_param = f_param.replace(re, r_text);
+
 	var f_trailer = "- <text>";
+	re = new RegExp("<nick>", "g");
+	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<text>", "g");
 	f_trailer = f_trailer.replace(re, r_text);
 
 	return {
 		prefix: undefined,
 		command: RPL.MOTD,
-		params: undefined,
+		params: f_param,
 		trailer: f_trailer,
 	};
 };
 
-// RPL_ENDOFMOTD ":End of MOTD command"
-exports.RPL_ENDOFMOTD = function() {
+// RPL_ENDOFMOTD "<nick> :End of MOTD command"
+exports.RPL_ENDOFMOTD = function(r_nick) {
 
 	var re = undefined;
 
+	var f_param = "<nick>";
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
+
 	var f_trailer = "End of MOTD command";
+	re = new RegExp("<nick>", "g");
+	f_trailer = f_trailer.replace(re, r_nick);
 
 	return {
 		prefix: undefined,
 		command: RPL.ENDOFMOTD,
-		params: undefined,
+		params: f_param,
 		trailer: f_trailer,
 	};
 };
@@ -1499,19 +1521,35 @@ exports.RPL_SERVLISTEND = function(r_mask, r_type) {
 	};
 };
 
-// RPL_LUSERCLIENT ":There are <integer> users and <integer> services on <integer> servers"
-exports.RPL_LUSERCLIENT = function(r_integer) {
+// RPL_LUSERCLIENT "<nick> :There are <n_users> users and <n_services> services on <n_servers> servers"
+exports.RPL_LUSERCLIENT = function(r_nick, r_n_users, r_n_services, r_n_servers) {
 
 	var re = undefined;
 
-	var f_trailer = "There are <integer> users and <integer> services on <integer> servers";
-	re = new RegExp("<integer>", "g");
-	f_trailer = f_trailer.replace(re, r_integer);
+	var f_param = "<nick>";
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
+	re = new RegExp("<n_users>", "g");
+	f_param = f_param.replace(re, r_n_users);
+	re = new RegExp("<n_services>", "g");
+	f_param = f_param.replace(re, r_n_services);
+	re = new RegExp("<n_servers>", "g");
+	f_param = f_param.replace(re, r_n_servers);
+
+	var f_trailer = "There are <n_users> users and <n_services> services on <n_servers> servers";
+	re = new RegExp("<nick>", "g");
+	f_trailer = f_trailer.replace(re, r_nick);
+	re = new RegExp("<n_users>", "g");
+	f_trailer = f_trailer.replace(re, r_n_users);
+	re = new RegExp("<n_services>", "g");
+	f_trailer = f_trailer.replace(re, r_n_services);
+	re = new RegExp("<n_servers>", "g");
+	f_trailer = f_trailer.replace(re, r_n_servers);
 
 	return {
 		prefix: undefined,
 		command: RPL.LUSERCLIENT,
-		params: undefined,
+		params: f_param,
 		trailer: f_trailer,
 	};
 };
@@ -1579,19 +1617,31 @@ exports.RPL_LUSERCHANNELS = function(r_integer) {
 	};
 };
 
-// RPL_LUSERME ":I have <integer> clients and <integer> servers"
-exports.RPL_LUSERME = function(r_integer) {
+// RPL_LUSERME "<nick> :I have <n_cli> clients and <n_srv> servers"
+exports.RPL_LUSERME = function(r_nick, r_n_cli, r_n_srv) {
 
 	var re = undefined;
 
-	var f_trailer = "I have <integer> clients and <integer> servers";
-	re = new RegExp("<integer>", "g");
-	f_trailer = f_trailer.replace(re, r_integer);
+	var f_param = "<nick>";
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
+	re = new RegExp("<n_cli>", "g");
+	f_param = f_param.replace(re, r_n_cli);
+	re = new RegExp("<n_srv>", "g");
+	f_param = f_param.replace(re, r_n_srv);
+
+	var f_trailer = "I have <n_cli> clients and <n_srv> servers";
+	re = new RegExp("<nick>", "g");
+	f_trailer = f_trailer.replace(re, r_nick);
+	re = new RegExp("<n_cli>", "g");
+	f_trailer = f_trailer.replace(re, r_n_cli);
+	re = new RegExp("<n_srv>", "g");
+	f_trailer = f_trailer.replace(re, r_n_srv);
 
 	return {
 		prefix: undefined,
 		command: RPL.LUSERME,
-		params: undefined,
+		params: f_param,
 		trailer: f_trailer,
 	};
 };
