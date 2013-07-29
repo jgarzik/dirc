@@ -30,7 +30,7 @@ function ClassSpec(b) {
 	};
 
 	ConnMgr.prototype.get = function(nick) {
-		return this.cli[nick];
+		return this.cli_by_nick[nick];
 	};
 
 	ConnMgr.prototype.setNick = function(conn, nick) {
