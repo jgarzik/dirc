@@ -23,8 +23,8 @@ function ClassSpec(b) {
 		this.chanmgr = new ChanMgr();
 		this.ctime = undefined;
 
-		this.user_modes = 'aiwroOs';
-		this.chan_modes = 'oOvaimnqpsrtklbeI';
+		this.user_modes = 'aiwoOs';
+		this.chan_modes = 'ovtk';
 	};
 
 	function composeUserStr(conn) {
