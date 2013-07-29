@@ -645,16 +645,73 @@ exports.RPL_VERSION = function(r_version, r_debuglevel, r_server, r_comments) {
 	};
 };
 
-// RPL_ENDOFWHO "<name> :End of WHO list" 
-exports.RPL_ENDOFWHO = function(r_name) {
+// RPL_WHOREPLY "<mynick> <channel> <user> <host> <server> <nick> <flags> :<hopcount> <real name>"
+exports.RPL_WHOREPLY = function(r_mynick, r_channel, r_user, r_host, r_server, r_nick, r_flags, r_hopcount, r_real_name) {
 
 	var re = undefined;
 
-	var f_param = "<name>";
+	var f_param = "<mynick> <channel> <user> <host> <server> <nick> <flags>";
+	re = new RegExp("<mynick>", "g");
+	f_param = f_param.replace(re, r_mynick);
+	re = new RegExp("<channel>", "g");
+	f_param = f_param.replace(re, r_channel);
+	re = new RegExp("<user>", "g");
+	f_param = f_param.replace(re, r_user);
+	re = new RegExp("<host>", "g");
+	f_param = f_param.replace(re, r_host);
+	re = new RegExp("<server>", "g");
+	f_param = f_param.replace(re, r_server);
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
+	re = new RegExp("<flags>", "g");
+	f_param = f_param.replace(re, r_flags);
+	re = new RegExp("<hopcount>", "g");
+	f_param = f_param.replace(re, r_hopcount);
+	re = new RegExp("<real name>", "g");
+	f_param = f_param.replace(re, r_real_name);
+
+	var f_trailer = "<hopcount> <real name>";
+	re = new RegExp("<mynick>", "g");
+	f_trailer = f_trailer.replace(re, r_mynick);
+	re = new RegExp("<channel>", "g");
+	f_trailer = f_trailer.replace(re, r_channel);
+	re = new RegExp("<user>", "g");
+	f_trailer = f_trailer.replace(re, r_user);
+	re = new RegExp("<host>", "g");
+	f_trailer = f_trailer.replace(re, r_host);
+	re = new RegExp("<server>", "g");
+	f_trailer = f_trailer.replace(re, r_server);
+	re = new RegExp("<nick>", "g");
+	f_trailer = f_trailer.replace(re, r_nick);
+	re = new RegExp("<flags>", "g");
+	f_trailer = f_trailer.replace(re, r_flags);
+	re = new RegExp("<hopcount>", "g");
+	f_trailer = f_trailer.replace(re, r_hopcount);
+	re = new RegExp("<real name>", "g");
+	f_trailer = f_trailer.replace(re, r_real_name);
+
+	return {
+		prefix: undefined,
+		command: RPL.WHOREPLY,
+		params: f_param,
+		trailer: f_trailer,
+	};
+};
+
+// RPL_ENDOFWHO "<nick> <name> :End of WHO list" 
+exports.RPL_ENDOFWHO = function(r_nick, r_name) {
+
+	var re = undefined;
+
+	var f_param = "<nick> <name>";
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
 	re = new RegExp("<name>", "g");
 	f_param = f_param.replace(re, r_name);
 
 	var f_trailer = "End of WHO list";
+	re = new RegExp("<nick>", "g");
+	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<name>", "g");
 	f_trailer = f_trailer.replace(re, r_name);
 

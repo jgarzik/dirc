@@ -386,6 +386,39 @@ function ClassSpec(b) {
 		conn.active = true;
 	};
 
+	Server.prototype.connWho = function(info) {
+		var conn = info.conn;
+		var chanName = info.message.irc_params;
+
+		if (!conn.active) {
+			var msg = IrcReplies.ERR_NOTREGISTERED();
+			this.reply(conn, msg);
+			return;
+		}
+
+		if (!validate.channel(chanName)) {
+			var msg = IrcReplies.ERR_BADCHANMASK(chanName);
+			this.reply(conn, msg);
+			return;
+		}
+
+		var chan = this.chanmgr.get(chanName);
+		if (!chan) {
+			var msg = IrcReplies.ERR_NOSUCHCHANNEL(chanName);
+			this.reply(conn, msg);
+			return;
+		}
+
+		var msgs = chan.whoList(conn.nick, this.hostname);
+		var us = this;
+		msgs.forEach(function(msg) {
+			us.reply(conn, msg);
+		});
+
+		var msg = IrcReplies.RPL_ENDOFWHO(conn.nick, chanName);
+		this.reply(conn, msg);
+	};
+
 	Server.prototype.connWhoisUser = function(conn, mask) {
 		var msg = undefined;
 
@@ -455,6 +488,7 @@ function ClassSpec(b) {
 		conn.on('PRIVMSG', function(info) { us.connPrivMsg(info); });
 		conn.on('QUIT', function(info) { us.connQuit(info); });
 		conn.on('USER', function(info) { us.connUser(info); });
+		conn.on('WHO', function(info) { us.connWho(info); });
 		conn.on('WHOIS', function(info) { us.connWhois(info); });
 
 		conn.start();

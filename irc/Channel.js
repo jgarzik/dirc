@@ -1,6 +1,8 @@
 require('classtool');
 
 function ClassSpec(b) {
+	var IrcReplies = require('./replies');
+
 	function Channel(cfg) {
 		Channel.super(this, arguments);
 
@@ -64,7 +66,32 @@ function ClassSpec(b) {
 		}
 
 		return res;
-	}
+	};
+
+	Channel.prototype.whoList = function(myNick, serverName) {
+		var res = [];
+		for (var nick in this.users) {
+			user = this.users[nick];
+			var conn = user.conn;
+
+			var flags = 'H';
+			if ('op' in user.flags)
+				flags += '@';
+
+			var msg = IrcReplies.RPL_WHOREPLY(myNick,
+							  this.name,
+							  conn.user,
+							  conn.user_host,
+							  serverName,
+							  conn.nick,
+							  flags,
+							  '0',
+							  conn.user_realname);
+			res.push(msg);
+		}
+
+		return res;
+	};
 
 	return Channel;
 };
