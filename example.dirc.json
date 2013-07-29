@@ -1,0 +1,16 @@
+{
+	"irc": {
+		"hostname": "localhost",
+		"port": 12667,
+
+		"trace": {
+			"netWrite": true,
+			"netRead": true
+		}
+	},
+
+	"http": {
+		"host": "localhost",
+		"port": 9394
+	}
+}
