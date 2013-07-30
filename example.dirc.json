@@ -2,6 +2,7 @@
 	"irc": {
 		"hostname": "localhost",
 		"port": 12667,
+		"MOTD": "A one-line message of the day",
 
 		"trace": {
 			"netWrite": true,
