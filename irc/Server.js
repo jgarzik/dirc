@@ -11,6 +11,10 @@ function ClassSpec(b) {
 	var IrcReplies = require('./replies');
 	var validate = require('./validate');
 
+	var MAX_NICKLEN = 16;
+	var MAX_CHANLEN = 50;
+	var MAX_TOPICLEN = 160;
+
 	function Server(cfg) {
 		if (typeof cfg !== 'object')
 			cfg = {};
@@ -112,14 +116,6 @@ function ClassSpec(b) {
 		};
 
 		chan.send(msg);
-
-		if (chan.topic) {
-			msg = IrcReplies.RPL_TOPIC(chan_name, chan.topic);
-			this.reply(conn, msg);
-		} else {
-			msg = IrcReplies.RPL_NOTOPIC(chan_name);
-			this.reply(conn, msg);
-		}
 
 		var userList = chan.userList();
 		var us = this;
@@ -347,6 +343,79 @@ function ClassSpec(b) {
 		this.connEnd(info, msg);
 	};
 
+	Server.prototype.connTopic = function(info) {
+		var conn = info.conn;
+		var chanName = info.message.topic.channel;
+		var newTopic = info.message.topic.newTopic;
+
+		var chan = this.chanmgr.get(chanName);
+		var msg = undefined;
+		if (!chan) {
+			msg = IrcReplies.ERR_NOSUCHCHANNEL(chanName);
+			this.reply(conn, msg);
+			return;
+		}
+
+		var update = false;
+		var clear = false;
+
+		if (newTopic)
+			update = true;
+		else {
+			var re = / :$/;
+			if (info.message.irc_line.match(re)) {
+				update = true;
+				clear = true;
+			}
+		}
+
+		if (!update) {
+			if (chan.topic)
+				msg = IrcReplies.RPL_TOPIC(conn.nick, chanName, chan.topic);
+			else
+				msg = IrcReplies.RPL_NOTOPIC(conn.nick, chanName);
+			this.reply(conn, msg);
+			return;
+		}
+
+		if (clear)
+			chan.topic = '';
+		else {
+			if (!validate.topic(newTopic)) {
+				msg = IrcReplies.ERR_NEEDMOREPARAMS('TOPIC');
+				this.reply(conn, msg);
+				return;
+			}
+
+			chan.topic = newTopic;
+		}
+
+		msg = {
+			prefix: composeUserStr(conn),
+			command: 'TOPIC',
+			params: chanName,
+			trailer: chan.topic,
+		};
+
+		chan.send(msg);
+	};
+
+	function isupport(nick) {
+		var res = [
+			"CHANTYPES=&#",
+			"CASEMAPPING=rfc1459",
+			"CHARSET=ascii",
+			"NICKLEN=" + String(MAX_NICKLEN),
+			"CHANNELLEN=" + String(MAX_CHANLEN),
+			"TOPICLEN=" + String(MAX_TOPICLEN),
+		];
+
+		var msg = IrcReplies.RPL_ISUPPORT(nick, res.join(' '));
+
+		// once we exceed 13, we must send multiple replies
+		return [ msg ];
+	}
+
 	Server.prototype.connUser = function(info) {
 		var conn = info.conn;
 		var user = info.message.user;
@@ -383,6 +452,12 @@ function ClassSpec(b) {
 					    this.user_modes,
 					    this.chan_modes);
 		this.reply(conn, msg);
+
+		var isupp = isupport(conn.nick);
+		var us = this;
+		isupp.forEach(function(isuppMsg) {
+			us.reply(conn, isuppMsg);
+		});
 
 		msg = IrcReplies.RPL_LUSERCLIENT(conn.nick,
 						 this.connmgr.count(),
@@ -509,6 +584,7 @@ function ClassSpec(b) {
 		conn.on('PING', function(info) { us.connPing(info); });
 		conn.on('PRIVMSG', function(info) { us.connPrivMsg(info); });
 		conn.on('QUIT', function(info) { us.connQuit(info); });
+		conn.on('TOPIC', function(info) { us.connTopic(info); });
 		conn.on('USER', function(info) { us.connUser(info); });
 		conn.on('WHO', function(info) { us.connWho(info); });
 		conn.on('WHOIS', function(info) { us.connWhois(info); });

@@ -45,6 +45,13 @@ function ClassSpec(b) {
 		msg.pass = msg.irc_params;
 	}
 
+	function me_topic(msg) {
+		msg.topic = {
+			channel: msg.irc_params,
+			newTopic: msg.irc_trailer,
+		};
+	}
+
 	function me_user(msg) {
 		msg.user = msg.irc_params.split(' ');
 		msg.user.push(msg.irc_trailer);
@@ -70,6 +77,7 @@ function ClassSpec(b) {
 		case 'MODE': me_mode(msg); break;
 		case 'NICK': me_nick(msg); break;
 		case 'PASS': me_pass(msg); break;
+		case 'TOPIC': me_topic(msg); break;
 		case 'USER': me_user(msg); break;
 		case 'WHOIS': me_whois(msg); break;
 		default:
@@ -125,6 +133,7 @@ function ClassSpec(b) {
 
 			var command = res[3].toUpperCase();
 			var msg = {
+				irc_line: line,
 				irc_prefix: res[2],
 				irc_command: command,
 				irc_params: res[5],

@@ -105,21 +105,27 @@ exports.RPL_MYINFO = function(r_nick, r_servername, r_version, r_available_user_
 	};
 };
 
-// RPL_BOUNCE "Try server <server name>, port <port number>" 
-exports.RPL_BOUNCE = function(r_server_name, r_port_number) {
+// RPL_ISUPPORT "<nick> <keyvalue_list> :are supported by this server"
+exports.RPL_ISUPPORT = function(r_nick, r_keyvalue_list) {
 
 	var re = undefined;
 
-	var f_trailer = "Try server <server name>, port <port number>";
-	re = new RegExp("<server name>", "g");
-	f_trailer = f_trailer.replace(re, r_server_name);
-	re = new RegExp("<port number>", "g");
-	f_trailer = f_trailer.replace(re, r_port_number);
+	var f_param = "<nick> <keyvalue_list>";
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
+	re = new RegExp("<keyvalue_list>", "g");
+	f_param = f_param.replace(re, r_keyvalue_list);
+
+	var f_trailer = "are supported by this server";
+	re = new RegExp("<nick>", "g");
+	f_trailer = f_trailer.replace(re, r_nick);
+	re = new RegExp("<keyvalue_list>", "g");
+	f_trailer = f_trailer.replace(re, r_keyvalue_list);
 
 	return {
 		prefix: undefined,
-		command: RPL.BOUNCE,
-		params: undefined,
+		command: RPL.ISUPPORT,
+		params: f_param,
 		trailer: f_trailer,
 	};
 };
@@ -446,16 +452,20 @@ exports.RPL_CHANNELMODEIS = function(r_channel, r_mode, r_mode_params) {
 	};
 };
 
-// RPL_NOTOPIC "<channel> :No topic is set"
-exports.RPL_NOTOPIC = function(r_channel) {
+// RPL_NOTOPIC "<nick> <channel> :No topic is set"
+exports.RPL_NOTOPIC = function(r_nick, r_channel) {
 
 	var re = undefined;
 
-	var f_param = "<channel>";
+	var f_param = "<nick> <channel>";
+	re = new RegExp("<nick>", "g");
+	f_param = f_param.replace(re, r_nick);
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "No topic is set";
+	re = new RegExp("<nick>", "g");
+	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<channel>", "g");
 	f_trailer = f_trailer.replace(re, r_channel);
 
