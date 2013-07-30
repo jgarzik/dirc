@@ -37,15 +37,28 @@ function scanArgStr(argarr, argDict, s, wantSym)
 	}
 }
 
-function pr_hdr(line, command, args, argSym, params, trailer)
+function pr_hdr(line, command, params, trailer)
 {
 	params = params.replace(/\s\s*$/, '');
+
+	var args = [];
+	var argSym = [];
+	var argDict = {};
+	scanArgStr(argSym, argDict, params, true);
+	scanArgStr(argSym, argDict, trailer, true);
 
 	console.log("\n// " + line);
 	var argstr = argSym.join(', ');
 	console.log("exports." + command + " = function(" + argstr + ") {");
 
 	var reWS = /^\s*$/;
+
+	args = [];
+	argDict = {};
+	scanArgStr(args, argDict, params, false);
+	argSym = [];
+	argDict = {};
+	scanArgStr(argSym, argDict, params, true);
 
 	var haveParams = !params.match(reWS);
 	if (haveParams) {
@@ -56,6 +69,13 @@ function pr_hdr(line, command, args, argSym, params, trailer)
 		console.log("\tf_param = f_param.replace(re, " + argSym[i] + ");");
 	}
 	}
+
+	args = [];
+	argDict = {};
+	scanArgStr(args, argDict, trailer, false);
+	argSym = [];
+	argDict = {};
+	scanArgStr(argSym, argDict, trailer, true);
 
 	var haveTrailer = !trailer.match(reWS);
 	if (haveTrailer) {
@@ -120,17 +140,7 @@ function parseLine(line)
 		trailer = res[3];
 	}
 
-	var argDict = {};
-	var args = [];
-	scanArgStr(args, argDict, params, false);
-	scanArgStr(args, argDict, trailer, false);
-
-	argDict = {};
-	var argSym = [];
-	scanArgStr(argSym, argDict, params, true);
-	scanArgStr(argSym, argDict, trailer, true);
-
-	pr_hdr(line, command, args, argSym, params, trailer);
+	pr_hdr(line, command, params, trailer);
 	pr_ftr();
 }
 

@@ -34,14 +34,8 @@ exports.RPL_YOURHOST = function(r_nick, r_servername, r_ver) {
 	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
-	re = new RegExp("<servername>", "g");
-	f_param = f_param.replace(re, r_servername);
-	re = new RegExp("<ver>", "g");
-	f_param = f_param.replace(re, r_ver);
 
 	var f_trailer = "Your host is <servername>, running version <ver>";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<servername>", "g");
 	f_trailer = f_trailer.replace(re, r_servername);
 	re = new RegExp("<ver>", "g");
@@ -63,12 +57,8 @@ exports.RPL_CREATED = function(r_nick, r_date) {
 	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
-	re = new RegExp("<date>", "g");
-	f_param = f_param.replace(re, r_date);
 
 	var f_trailer = "This server was created <date>";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<date>", "g");
 	f_trailer = f_trailer.replace(re, r_date);
 
@@ -117,10 +107,6 @@ exports.RPL_ISUPPORT = function(r_nick, r_keyvalue_list) {
 	f_param = f_param.replace(re, r_keyvalue_list);
 
 	var f_trailer = "are supported by this server";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
-	re = new RegExp("<keyvalue_list>", "g");
-	f_trailer = f_trailer.replace(re, r_keyvalue_list);
 
 	return {
 		prefix: undefined,
@@ -138,12 +124,8 @@ exports.RPL_AWAY = function(r_nick, r_away_message) {
 	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
-	re = new RegExp("<away message>", "g");
-	f_param = f_param.replace(re, r_away_message);
 
 	var f_trailer = "<away message>";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<away message>", "g");
 	f_trailer = f_trailer.replace(re, r_away_message);
 
@@ -197,16 +179,8 @@ exports.RPL_WHOISUSER = function(r_nick, r_user, r_host, r_real_name) {
 	f_param = f_param.replace(re, r_user);
 	re = new RegExp("<host>", "g");
 	f_param = f_param.replace(re, r_host);
-	re = new RegExp("<real name>", "g");
-	f_param = f_param.replace(re, r_real_name);
 
 	var f_trailer = "<real name>";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
-	re = new RegExp("<user>", "g");
-	f_trailer = f_trailer.replace(re, r_user);
-	re = new RegExp("<host>", "g");
-	f_trailer = f_trailer.replace(re, r_host);
 	re = new RegExp("<real name>", "g");
 	f_trailer = f_trailer.replace(re, r_real_name);
 
@@ -228,14 +202,8 @@ exports.RPL_WHOISSERVER = function(r_nick, r_server, r_server_info) {
 	f_param = f_param.replace(re, r_nick);
 	re = new RegExp("<server>", "g");
 	f_param = f_param.replace(re, r_server);
-	re = new RegExp("<server info>", "g");
-	f_param = f_param.replace(re, r_server_info);
 
 	var f_trailer = "<server info>";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
-	re = new RegExp("<server>", "g");
-	f_trailer = f_trailer.replace(re, r_server);
 	re = new RegExp("<server info>", "g");
 	f_trailer = f_trailer.replace(re, r_server_info);
 
@@ -257,8 +225,6 @@ exports.RPL_WHOISOPERATOR = function(r_nick) {
 	f_param = f_param.replace(re, r_nick);
 
 	var f_trailer = "is an IRC operator";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 
 	return {
 		prefix: undefined,
@@ -280,10 +246,6 @@ exports.RPL_WHOISIDLE = function(r_nick, r_integer) {
 	f_param = f_param.replace(re, r_integer);
 
 	var f_trailer = "seconds idle";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
-	re = new RegExp("<integer>", "g");
-	f_trailer = f_trailer.replace(re, r_integer);
 
 	return {
 		prefix: undefined,
@@ -303,8 +265,6 @@ exports.RPL_ENDOFWHOIS = function(r_nick) {
 	f_param = f_param.replace(re, r_nick);
 
 	var f_trailer = "End of WHOIS list";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 
 	return {
 		prefix: undefined,
@@ -326,16 +286,8 @@ exports.RPL_WHOWASUSER = function(r_nick, r_user, r_host, r_real_name) {
 	f_param = f_param.replace(re, r_user);
 	re = new RegExp("<host>", "g");
 	f_param = f_param.replace(re, r_host);
-	re = new RegExp("<real name>", "g");
-	f_param = f_param.replace(re, r_real_name);
 
 	var f_trailer = "<real name>";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
-	re = new RegExp("<user>", "g");
-	f_trailer = f_trailer.replace(re, r_user);
-	re = new RegExp("<host>", "g");
-	f_trailer = f_trailer.replace(re, r_host);
 	re = new RegExp("<real name>", "g");
 	f_trailer = f_trailer.replace(re, r_real_name);
 
@@ -357,8 +309,6 @@ exports.RPL_ENDOFWHOWAS = function(r_nick) {
 	f_param = f_param.replace(re, r_nick);
 
 	var f_trailer = "End of WHOWAS";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 
 	return {
 		prefix: undefined,
@@ -378,14 +328,8 @@ exports.RPL_LIST = function(r_channel, r_n_visible, r_topic) {
 	f_param = f_param.replace(re, r_channel);
 	re = new RegExp("<# visible>", "g");
 	f_param = f_param.replace(re, r_n_visible);
-	re = new RegExp("<topic>", "g");
-	f_param = f_param.replace(re, r_topic);
 
 	var f_trailer = "<topic>";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
-	re = new RegExp("<# visible>", "g");
-	f_trailer = f_trailer.replace(re, r_n_visible);
 	re = new RegExp("<topic>", "g");
 	f_trailer = f_trailer.replace(re, r_topic);
 
@@ -464,10 +408,6 @@ exports.RPL_NOTOPIC = function(r_nick, r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "No topic is set";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -485,12 +425,8 @@ exports.RPL_TOPIC = function(r_channel, r_topic) {
 	var f_param = "<channel>";
 	re = new RegExp("<channel>", "g");
 	f_param = f_param.replace(re, r_channel);
-	re = new RegExp("<topic>", "g");
-	f_param = f_param.replace(re, r_topic);
 
 	var f_trailer = "<topic>";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 	re = new RegExp("<topic>", "g");
 	f_trailer = f_trailer.replace(re, r_topic);
 
@@ -531,8 +467,6 @@ exports.RPL_SUMMONING = function(r_user) {
 	f_param = f_param.replace(re, r_user);
 
 	var f_trailer = "Summoning user to IRC";
-	re = new RegExp("<user>", "g");
-	f_trailer = f_trailer.replace(re, r_user);
 
 	return {
 		prefix: undefined,
@@ -571,8 +505,6 @@ exports.RPL_ENDOFINVITELIST = function(r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "End of channel invite list";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -611,8 +543,6 @@ exports.RPL_ENDOFEXCEPTLIST = function(r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "End of channel exception list";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -634,16 +564,8 @@ exports.RPL_VERSION = function(r_version, r_debuglevel, r_server, r_comments) {
 	f_param = f_param.replace(re, r_debuglevel);
 	re = new RegExp("<server>", "g");
 	f_param = f_param.replace(re, r_server);
-	re = new RegExp("<comments>", "g");
-	f_param = f_param.replace(re, r_comments);
 
 	var f_trailer = "<comments>";
-	re = new RegExp("<version>", "g");
-	f_trailer = f_trailer.replace(re, r_version);
-	re = new RegExp("<debuglevel>", "g");
-	f_trailer = f_trailer.replace(re, r_debuglevel);
-	re = new RegExp("<server>", "g");
-	f_trailer = f_trailer.replace(re, r_server);
 	re = new RegExp("<comments>", "g");
 	f_trailer = f_trailer.replace(re, r_comments);
 
@@ -675,26 +597,8 @@ exports.RPL_WHOREPLY = function(r_mynick, r_channel, r_user, r_host, r_server, r
 	f_param = f_param.replace(re, r_nick);
 	re = new RegExp("<flags>", "g");
 	f_param = f_param.replace(re, r_flags);
-	re = new RegExp("<hopcount>", "g");
-	f_param = f_param.replace(re, r_hopcount);
-	re = new RegExp("<real name>", "g");
-	f_param = f_param.replace(re, r_real_name);
 
 	var f_trailer = "<hopcount> <real name>";
-	re = new RegExp("<mynick>", "g");
-	f_trailer = f_trailer.replace(re, r_mynick);
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
-	re = new RegExp("<user>", "g");
-	f_trailer = f_trailer.replace(re, r_user);
-	re = new RegExp("<host>", "g");
-	f_trailer = f_trailer.replace(re, r_host);
-	re = new RegExp("<server>", "g");
-	f_trailer = f_trailer.replace(re, r_server);
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
-	re = new RegExp("<flags>", "g");
-	f_trailer = f_trailer.replace(re, r_flags);
 	re = new RegExp("<hopcount>", "g");
 	f_trailer = f_trailer.replace(re, r_hopcount);
 	re = new RegExp("<real name>", "g");
@@ -720,10 +624,6 @@ exports.RPL_ENDOFWHO = function(r_nick, r_name) {
 	f_param = f_param.replace(re, r_name);
 
 	var f_trailer = "End of WHO list";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
-	re = new RegExp("<name>", "g");
-	f_trailer = f_trailer.replace(re, r_name);
 
 	return {
 		prefix: undefined,
@@ -745,10 +645,6 @@ exports.RPL_ENDOFNAMES = function(r_nick, r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "End of NAMES list";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -768,16 +664,8 @@ exports.RPL_LINKS = function(r_mask, r_server, r_hopcount, r_server_info) {
 	f_param = f_param.replace(re, r_mask);
 	re = new RegExp("<server>", "g");
 	f_param = f_param.replace(re, r_server);
-	re = new RegExp("<hopcount>", "g");
-	f_param = f_param.replace(re, r_hopcount);
-	re = new RegExp("<server info>", "g");
-	f_param = f_param.replace(re, r_server_info);
 
 	var f_trailer = "<hopcount> <server info>";
-	re = new RegExp("<mask>", "g");
-	f_trailer = f_trailer.replace(re, r_mask);
-	re = new RegExp("<server>", "g");
-	f_trailer = f_trailer.replace(re, r_server);
 	re = new RegExp("<hopcount>", "g");
 	f_trailer = f_trailer.replace(re, r_hopcount);
 	re = new RegExp("<server info>", "g");
@@ -801,8 +689,6 @@ exports.RPL_ENDOFLINKS = function(r_mask) {
 	f_param = f_param.replace(re, r_mask);
 
 	var f_trailer = "End of LINKS list";
-	re = new RegExp("<mask>", "g");
-	f_trailer = f_trailer.replace(re, r_mask);
 
 	return {
 		prefix: undefined,
@@ -841,8 +727,6 @@ exports.RPL_ENDOFBANLIST = function(r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "End of channel ban list";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -892,12 +776,8 @@ exports.RPL_MOTDSTART = function(r_nick, r_server) {
 	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
-	re = new RegExp("<server>", "g");
-	f_param = f_param.replace(re, r_server);
 
 	var f_trailer = "- <server> Message of the day - ";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<server>", "g");
 	f_trailer = f_trailer.replace(re, r_server);
 
@@ -917,12 +797,8 @@ exports.RPL_MOTD = function(r_nick, r_text) {
 	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
-	re = new RegExp("<text>", "g");
-	f_param = f_param.replace(re, r_text);
 
 	var f_trailer = "- <text>";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<text>", "g");
 	f_trailer = f_trailer.replace(re, r_text);
 
@@ -944,8 +820,6 @@ exports.RPL_ENDOFMOTD = function(r_nick) {
 	f_param = f_param.replace(re, r_nick);
 
 	var f_trailer = "End of MOTD command";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 
 	return {
 		prefix: undefined,
@@ -980,8 +854,6 @@ exports.RPL_REHASHING = function(r_config_file) {
 	f_param = f_param.replace(re, r_config_file);
 
 	var f_trailer = "Rehashing";
-	re = new RegExp("<config file>", "g");
-	f_trailer = f_trailer.replace(re, r_config_file);
 
 	return {
 		prefix: undefined,
@@ -1016,12 +888,8 @@ exports.RPL_TIME = function(r_server, r_string_showing_server_s_local_time) {
 	var f_param = "<server>";
 	re = new RegExp("<server>", "g");
 	f_param = f_param.replace(re, r_server);
-	re = new RegExp("<string showing server's local time>", "g");
-	f_param = f_param.replace(re, r_string_showing_server_s_local_time);
 
 	var f_trailer = "<string showing server's local time>";
-	re = new RegExp("<server>", "g");
-	f_trailer = f_trailer.replace(re, r_server);
 	re = new RegExp("<string showing server's local time>", "g");
 	f_trailer = f_trailer.replace(re, r_string_showing_server_s_local_time);
 
@@ -1342,10 +1210,6 @@ exports.RPL_TRACEEND = function(r_server_name, r_version_debug_level) {
 	f_param = f_param.replace(re, r_version_debug_level);
 
 	var f_trailer = "End of TRACE";
-	re = new RegExp("<server name>", "g");
-	f_trailer = f_trailer.replace(re, r_server_name);
-	re = new RegExp("<version & debug level>", "g");
-	f_trailer = f_trailer.replace(re, r_version_debug_level);
 
 	return {
 		prefix: undefined,
@@ -1417,8 +1281,6 @@ exports.RPL_ENDOFSTATS = function(r_stats_letter) {
 	f_param = f_param.replace(re, r_stats_letter);
 
 	var f_trailer = "End of STATS report";
-	re = new RegExp("<stats letter>", "g");
-	f_trailer = f_trailer.replace(re, r_stats_letter);
 
 	return {
 		prefix: undefined,
@@ -1518,10 +1380,6 @@ exports.RPL_SERVLISTEND = function(r_mask, r_type) {
 	f_param = f_param.replace(re, r_type);
 
 	var f_trailer = "End of service listing";
-	re = new RegExp("<mask>", "g");
-	f_trailer = f_trailer.replace(re, r_mask);
-	re = new RegExp("<type>", "g");
-	f_trailer = f_trailer.replace(re, r_type);
 
 	return {
 		prefix: undefined,
@@ -1539,16 +1397,8 @@ exports.RPL_LUSERCLIENT = function(r_nick, r_n_users, r_n_services, r_n_servers)
 	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
-	re = new RegExp("<n_users>", "g");
-	f_param = f_param.replace(re, r_n_users);
-	re = new RegExp("<n_services>", "g");
-	f_param = f_param.replace(re, r_n_services);
-	re = new RegExp("<n_servers>", "g");
-	f_param = f_param.replace(re, r_n_servers);
 
 	var f_trailer = "There are <n_users> users and <n_services> services on <n_servers> servers";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<n_users>", "g");
 	f_trailer = f_trailer.replace(re, r_n_users);
 	re = new RegExp("<n_services>", "g");
@@ -1574,8 +1424,6 @@ exports.RPL_LUSEROP = function(r_integer) {
 	f_param = f_param.replace(re, r_integer);
 
 	var f_trailer = "operator(s) online";
-	re = new RegExp("<integer>", "g");
-	f_trailer = f_trailer.replace(re, r_integer);
 
 	return {
 		prefix: undefined,
@@ -1595,8 +1443,6 @@ exports.RPL_LUSERUNKNOWN = function(r_integer) {
 	f_param = f_param.replace(re, r_integer);
 
 	var f_trailer = "unknown connection(s)";
-	re = new RegExp("<integer>", "g");
-	f_trailer = f_trailer.replace(re, r_integer);
 
 	return {
 		prefix: undefined,
@@ -1616,8 +1462,6 @@ exports.RPL_LUSERCHANNELS = function(r_integer) {
 	f_param = f_param.replace(re, r_integer);
 
 	var f_trailer = "channels formed";
-	re = new RegExp("<integer>", "g");
-	f_trailer = f_trailer.replace(re, r_integer);
 
 	return {
 		prefix: undefined,
@@ -1635,14 +1479,8 @@ exports.RPL_LUSERME = function(r_nick, r_n_cli, r_n_srv) {
 	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
-	re = new RegExp("<n_cli>", "g");
-	f_param = f_param.replace(re, r_n_cli);
-	re = new RegExp("<n_srv>", "g");
-	f_param = f_param.replace(re, r_n_srv);
 
 	var f_trailer = "I have <n_cli> clients and <n_srv> servers";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<n_cli>", "g");
 	f_trailer = f_trailer.replace(re, r_n_cli);
 	re = new RegExp("<n_srv>", "g");
@@ -1666,8 +1504,6 @@ exports.RPL_ADMINME = function(r_server) {
 	f_param = f_param.replace(re, r_server);
 
 	var f_trailer = "Administrative info";
-	re = new RegExp("<server>", "g");
-	f_trailer = f_trailer.replace(re, r_server);
 
 	return {
 		prefix: undefined,
@@ -1738,8 +1574,6 @@ exports.RPL_TRYAGAIN = function(r_command) {
 	f_param = f_param.replace(re, r_command);
 
 	var f_trailer = "Please wait a while and try again.";
-	re = new RegExp("<command>", "g");
-	f_trailer = f_trailer.replace(re, r_command);
 
 	return {
 		prefix: undefined,
@@ -1759,8 +1593,6 @@ exports.ERR_NOSUCHNICK = function(r_nickname) {
 	f_param = f_param.replace(re, r_nickname);
 
 	var f_trailer = "No such nick/channel";
-	re = new RegExp("<nickname>", "g");
-	f_trailer = f_trailer.replace(re, r_nickname);
 
 	return {
 		prefix: undefined,
@@ -1780,8 +1612,6 @@ exports.ERR_NOSUCHSERVER = function(r_server_name) {
 	f_param = f_param.replace(re, r_server_name);
 
 	var f_trailer = "No such server";
-	re = new RegExp("<server name>", "g");
-	f_trailer = f_trailer.replace(re, r_server_name);
 
 	return {
 		prefix: undefined,
@@ -1801,8 +1631,6 @@ exports.ERR_NOSUCHCHANNEL = function(r_channel_name) {
 	f_param = f_param.replace(re, r_channel_name);
 
 	var f_trailer = "No such channel";
-	re = new RegExp("<channel name>", "g");
-	f_trailer = f_trailer.replace(re, r_channel_name);
 
 	return {
 		prefix: undefined,
@@ -1822,8 +1650,6 @@ exports.ERR_CANNOTSENDTOCHAN = function(r_channel_name) {
 	f_param = f_param.replace(re, r_channel_name);
 
 	var f_trailer = "Cannot send to channel";
-	re = new RegExp("<channel name>", "g");
-	f_trailer = f_trailer.replace(re, r_channel_name);
 
 	return {
 		prefix: undefined,
@@ -1843,8 +1669,6 @@ exports.ERR_TOOMANYCHANNELS = function(r_channel_name) {
 	f_param = f_param.replace(re, r_channel_name);
 
 	var f_trailer = "You have joined too many channels";
-	re = new RegExp("<channel name>", "g");
-	f_trailer = f_trailer.replace(re, r_channel_name);
 
 	return {
 		prefix: undefined,
@@ -1864,8 +1688,6 @@ exports.ERR_WASNOSUCHNICK = function(r_nickname) {
 	f_param = f_param.replace(re, r_nickname);
 
 	var f_trailer = "There was no such nickname";
-	re = new RegExp("<nickname>", "g");
-	f_trailer = f_trailer.replace(re, r_nickname);
 
 	return {
 		prefix: undefined,
@@ -1883,14 +1705,8 @@ exports.ERR_TOOMANYTARGETS = function(r_target, r_error_code, r_abort_message) {
 	var f_param = "<target>";
 	re = new RegExp("<target>", "g");
 	f_param = f_param.replace(re, r_target);
-	re = new RegExp("<error code>", "g");
-	f_param = f_param.replace(re, r_error_code);
-	re = new RegExp("<abort message>", "g");
-	f_param = f_param.replace(re, r_abort_message);
 
 	var f_trailer = "<error code> recipients. <abort message>";
-	re = new RegExp("<target>", "g");
-	f_trailer = f_trailer.replace(re, r_target);
 	re = new RegExp("<error code>", "g");
 	f_trailer = f_trailer.replace(re, r_error_code);
 	re = new RegExp("<abort message>", "g");
@@ -1914,8 +1730,6 @@ exports.ERR_NOSUCHSERVICE = function(r_service_name) {
 	f_param = f_param.replace(re, r_service_name);
 
 	var f_trailer = "No such service";
-	re = new RegExp("<service name>", "g");
-	f_trailer = f_trailer.replace(re, r_service_name);
 
 	return {
 		prefix: undefined,
@@ -1982,8 +1796,6 @@ exports.ERR_NOTOPLEVEL = function(r_mask) {
 	f_param = f_param.replace(re, r_mask);
 
 	var f_trailer = "No toplevel domain specified";
-	re = new RegExp("<mask>", "g");
-	f_trailer = f_trailer.replace(re, r_mask);
 
 	return {
 		prefix: undefined,
@@ -2003,8 +1815,6 @@ exports.ERR_WILDTOPLEVEL = function(r_mask) {
 	f_param = f_param.replace(re, r_mask);
 
 	var f_trailer = "Wildcard in toplevel domain";
-	re = new RegExp("<mask>", "g");
-	f_trailer = f_trailer.replace(re, r_mask);
 
 	return {
 		prefix: undefined,
@@ -2024,8 +1834,6 @@ exports.ERR_BADMASK = function(r_mask) {
 	f_param = f_param.replace(re, r_mask);
 
 	var f_trailer = "Bad Server/host mask";
-	re = new RegExp("<mask>", "g");
-	f_trailer = f_trailer.replace(re, r_mask);
 
 	return {
 		prefix: undefined,
@@ -2045,8 +1853,6 @@ exports.ERR_UNKNOWNCOMMAND = function(r_command) {
 	f_param = f_param.replace(re, r_command);
 
 	var f_trailer = "Unknown command";
-	re = new RegExp("<command>", "g");
-	f_trailer = f_trailer.replace(re, r_command);
 
 	return {
 		prefix: undefined,
@@ -2081,8 +1887,6 @@ exports.ERR_NOADMININFO = function(r_server) {
 	f_param = f_param.replace(re, r_server);
 
 	var f_trailer = "No administrative info available";
-	re = new RegExp("<server>", "g");
-	f_trailer = f_trailer.replace(re, r_server);
 
 	return {
 		prefix: undefined,
@@ -2136,8 +1940,6 @@ exports.ERR_ERRONEUSNICKNAME = function(r_nick) {
 	f_param = f_param.replace(re, r_nick);
 
 	var f_trailer = "Erroneous nickname";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 
 	return {
 		prefix: undefined,
@@ -2157,8 +1959,6 @@ exports.ERR_NICKNAMEINUSE = function(r_nick) {
 	f_param = f_param.replace(re, r_nick);
 
 	var f_trailer = "Nickname is already in use";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 
 	return {
 		prefix: undefined,
@@ -2176,14 +1976,8 @@ exports.ERR_NICKCOLLISION = function(r_nick, r_user, r_host) {
 	var f_param = "<nick>";
 	re = new RegExp("<nick>", "g");
 	f_param = f_param.replace(re, r_nick);
-	re = new RegExp("<user>", "g");
-	f_param = f_param.replace(re, r_user);
-	re = new RegExp("<host>", "g");
-	f_param = f_param.replace(re, r_host);
 
 	var f_trailer = "Nickname collision KILL from <user>@<host>";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
 	re = new RegExp("<user>", "g");
 	f_trailer = f_trailer.replace(re, r_user);
 	re = new RegExp("<host>", "g");
@@ -2207,8 +2001,6 @@ exports.ERR_UNAVAILRESOURCE = function(r_nick_channel) {
 	f_param = f_param.replace(re, r_nick_channel);
 
 	var f_trailer = "Nick/channel is temporarily unavailable";
-	re = new RegExp("<nick/channel>", "g");
-	f_trailer = f_trailer.replace(re, r_nick_channel);
 
 	return {
 		prefix: undefined,
@@ -2230,10 +2022,6 @@ exports.ERR_USERNOTINCHANNEL = function(r_nick, r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "They aren't on that channel";
-	re = new RegExp("<nick>", "g");
-	f_trailer = f_trailer.replace(re, r_nick);
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -2253,8 +2041,6 @@ exports.ERR_NOTONCHANNEL = function(r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "You're not on that channel";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -2276,10 +2062,6 @@ exports.ERR_USERONCHANNEL = function(r_user, r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "is already on channel";
-	re = new RegExp("<user>", "g");
-	f_trailer = f_trailer.replace(re, r_user);
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -2299,8 +2081,6 @@ exports.ERR_NOLOGIN = function(r_user) {
 	f_param = f_param.replace(re, r_user);
 
 	var f_trailer = "User not logged in";
-	re = new RegExp("<user>", "g");
-	f_trailer = f_trailer.replace(re, r_user);
 
 	return {
 		prefix: undefined,
@@ -2365,8 +2145,6 @@ exports.ERR_NEEDMOREPARAMS = function(r_command) {
 	f_param = f_param.replace(re, r_command);
 
 	var f_trailer = "Not enough parameters";
-	re = new RegExp("<command>", "g");
-	f_trailer = f_trailer.replace(re, r_command);
 
 	return {
 		prefix: undefined,
@@ -2461,8 +2239,6 @@ exports.ERR_KEYSET = function(r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "Channel key already set";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -2482,8 +2258,6 @@ exports.ERR_CHANNELISFULL = function(r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "Cannot join channel (+l)";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -2501,12 +2275,8 @@ exports.ERR_UNKNOWNMODE = function(r_char, r_channel) {
 	var f_param = "<char>";
 	re = new RegExp("<char>", "g");
 	f_param = f_param.replace(re, r_char);
-	re = new RegExp("<channel>", "g");
-	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "is unknown mode char to me for <channel>";
-	re = new RegExp("<char>", "g");
-	f_trailer = f_trailer.replace(re, r_char);
 	re = new RegExp("<channel>", "g");
 	f_trailer = f_trailer.replace(re, r_channel);
 
@@ -2528,8 +2298,6 @@ exports.ERR_INVITEONLYCHAN = function(r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "Cannot join channel (+i)";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -2549,8 +2317,6 @@ exports.ERR_BANNEDFROMCHAN = function(r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "Cannot join channel (+b)";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -2570,8 +2336,6 @@ exports.ERR_BADCHANNELKEY = function(r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "Cannot join channel (+k)";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -2591,8 +2355,6 @@ exports.ERR_BADCHANMASK = function(r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "Bad Channel Mask";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -2612,8 +2374,6 @@ exports.ERR_NOCHANMODES = function(r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "Channel doesn't support modes";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
@@ -2635,10 +2395,6 @@ exports.ERR_BANLISTFULL = function(r_channel, r_char) {
 	f_param = f_param.replace(re, r_char);
 
 	var f_trailer = "Channel list is full";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
-	re = new RegExp("<char>", "g");
-	f_trailer = f_trailer.replace(re, r_char);
 
 	return {
 		prefix: undefined,
@@ -2673,8 +2429,6 @@ exports.ERR_CHANOPRIVSNEEDED = function(r_channel) {
 	f_param = f_param.replace(re, r_channel);
 
 	var f_trailer = "You're not channel operator";
-	re = new RegExp("<channel>", "g");
-	f_trailer = f_trailer.replace(re, r_channel);
 
 	return {
 		prefix: undefined,
